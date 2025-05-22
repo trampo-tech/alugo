@@ -1,6 +1,20 @@
 import './App.css';
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 function App() {
+  const [itens, setItens] = useState([]);
+
+  useEffect(() => {
+    axios.get('http://localhost:8080/itens')
+      .then(response => {
+        setItens(response.data);
+      })
+      .catch(error => {
+        console.error('Erro ao buscar itens:', error);
+      });
+  }, []);
+
   return (
     <div>
       <header>
@@ -22,26 +36,13 @@ function App() {
       <section className="popular">
         <h2>Popular items</h2>
         <div className="items">
-          <div className="card">
-            <img src="https://img.icons8.com/ios/100/step-ladder.png" alt="Ladder" />
-            <p className="name">Ladder</p>
-            <p className="price">$25 <span>/ day</span></p>
-          </div>
-          <div className="card">
-            <img src="https://img.icons8.com/ios/100/virtual-reality.png" alt="VR Headset" />
-            <p className="name">VR headset</p>
-            <p className="price">$49 <span>/ day</span></p>
-          </div>
-          <div className="card">
-            <img src="https://img.icons8.com/ios/100/guitar.png" alt="Guitar" />
-            <p className="name">Acoustic guitar</p>
-            <p className="price">$19 <span>/ day</span></p>
-          </div>
-          <div className="card">
-            <img src="https://img.icons8.com/ios/100/suitcase.png" alt="Suitcase" />
-            <p className="name">Suitcase</p>
-            <p className="price">$49 <span>/ day</span></p>
-          </div>
+          {itens.map((item) => (
+            <div className="card" key={item.id}>
+              <img src={item.imagem} alt={item.nome} />
+              <p className="name">{item.nome}</p>
+              <p className="price">${item.preco} <span>/ day</span></p>
+            </div>
+          ))}
         </div>
       </section>
 
