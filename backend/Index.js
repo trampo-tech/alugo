@@ -4,21 +4,20 @@ const cors = require('cors');
 const db = require('./db');
 
 const app = express();
-const PORT = process.env.PORT || 1111;
+const PORT = process.env.PORTFRONT || 1111;
 
 app.use(cors());
 app.use(express.json());
 
-// 🔥 ROTA DE TESTE PARA VALIDAR CONEXÃO COM O BANCO
-app.get('/test-db', (req, res) => {
-  const sql = 'SELECT * FROM usuarios LIMIT 5';
-  
-  db.query(sql, (err, results) => {
+//SELECT TESTE
+app.get('/api/itens', (req, res) => {
+  const sql = "SELECT * FROM itens";
+  db.query(sql, (err, data) => {
     if (err) {
-      console.error('❌ Erro na query:', err);
-      return res.status(500).json({ erro: 'Erro na conexão com o banco' });
+      console.error('❌ Erro ao buscar itens:', err);
+      return res.status(500).json({ error: 'Erro ao buscar itens' });
     }
-    res.json({ sucesso: true, dados: results });
+    return res.json(data);
   });
 });
 
