@@ -5,13 +5,10 @@ require('dotenv').config();
 
 const app = express();
 
-// ✅ Ativa CORS para aceitar requisições do frontend
 app.use(cors());
-
-// Permite interpretar JSON no corpo das requisições
 app.use(express.json());
 
-// Endpoint para buscar itens
+// Endpoint para buscar 4 itens aleatórios
 app.get('/itens', (req, res) => {
   const sql = 'SELECT * FROM itens ORDER BY RAND() LIMIT 4';
   db.query(sql, (err, result) => {
@@ -23,7 +20,6 @@ app.get('/itens', (req, res) => {
     res.json(result);
   });
 });
-
 
 // Inicia o servidor
 const PORT = process.env.PORT || 8080;

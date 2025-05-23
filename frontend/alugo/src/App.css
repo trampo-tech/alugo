@@ -33,6 +33,7 @@ header .buttons button {
     color: #111827;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 header .buttons button:hover {
@@ -75,6 +76,7 @@ header .buttons button:hover {
     border: none;
     padding: 12px 24px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .search-bar button:hover {
@@ -84,6 +86,7 @@ header .buttons button:hover {
 /* Popular items */
 .popular {
     padding: 40px 60px;
+    text-align: center;
 }
 
 .popular h2 {
@@ -93,27 +96,31 @@ header .buttons button:hover {
 
 .items {
     display: flex;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
     flex-wrap: wrap;
+    margin-top: 20px;
 }
 
 .card {
     background-color: white;
     border-radius: 12px;
-    padding: 16px;
-    width: 200px;
+    padding: 20px;
+    width: 220px;
     text-align: center;
     border: 1px solid #e2e8f0;
-    transition: box-shadow 0.2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card img {
-    width: 80px;
-    height: 80px;
+    width: 100px;
+    height: 100px;
     object-fit: contain;
     margin-bottom: 10px;
 }
@@ -121,10 +128,12 @@ header .buttons button:hover {
 .card .name {
     font-weight: bold;
     margin-bottom: 6px;
+    font-size: 1.1rem;
 }
 
 .card .price {
     color: #334155;
+    font-weight: 500;
 }
 
 .card .price span {
@@ -138,6 +147,7 @@ header .buttons button:hover {
     gap: 20px;
     justify-content: center;
     padding: 40px 60px;
+    flex-wrap: wrap;
 }
 
 .card-action {
@@ -147,6 +157,12 @@ header .buttons button:hover {
     width: 280px;
     border: 1px solid #e2e8f0;
     text-align: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-action:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .card-action h3 {
@@ -160,6 +176,7 @@ header .buttons button:hover {
     color: #111827;
     border-radius: 8px;
     cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .card-action button:hover {

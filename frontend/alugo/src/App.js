@@ -18,7 +18,7 @@ function App() {
   return (
     <div>
       <header>
-        <div className="logo">Rental Platform</div>
+        <div className="logo">Alugo</div>
         <div className="buttons">
           <button className="outline">Login</button>
           <button className="outline">Sign up</button>
@@ -36,14 +36,14 @@ function App() {
       <section className="popular">
         <h2>Popular items</h2>
         <div className="items">
-          {itens.map((item) => (
-            <div className="card" key={item.id}>
-              <img src={item.imagem} alt={item.nome} />
-              <p className="name">{item.nome}</p>
-              <p className="price">${item.preco} <span>/ day</span></p>
-            </div>
-          ))}
-        </div>
+        {itens.map((item) => (
+          <div className="card" key={item.id}>
+            <img src={item.imagem} alt={item.titulo} />
+            <p className="name">{item.titulo}</p>
+            <p className="price">R$ {item.preco_diario} <span>/ day</span></p>
+          </div>
+        ))}
+      </div>
       </section>
 
       <section className="actions">
