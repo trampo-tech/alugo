@@ -10,10 +10,10 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
   if (err) {
-    console.error('❌ Erro ao conectar no banco de dados:', err);
+    console.error('Erro ao conectar no banco de dados:', err);
     return;
   }
-  console.log('✅ Conectado ao banco de dados!');
+  console.log('Conectado ao banco de dados!');
 });
 
 module.exports = connection;
