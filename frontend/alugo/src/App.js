@@ -38,7 +38,7 @@ function App() {
         <div className="items">
         {itens.map((item) => (
           <div className="card" key={item.id}>
-            <img src={item.imagem} alt={item.titulo} />
+            <img src={`http://localhost:8080/imagem/${item.imagem_id}`} alt={item.titulo} />
             <p className="name">{item.titulo}</p>
             <p className="price">R$ {item.preco_diario} <span>/ day</span></p>
           </div>
