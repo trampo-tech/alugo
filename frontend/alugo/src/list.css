@@ -1,0 +1,12 @@
+.itens-page {
+  display: flex;
+  padding: 40px;
+  gap: 32px;
+}
+
+.listagem-itens {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+  flex: 1;
+}

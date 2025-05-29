@@ -52,7 +52,6 @@ app.get('/categoria', (req, res) => {
     LEFT JOIN imagens ON imagens.item_id = itens.id
     WHERE categoria = 'Eletrônicos'
     GROUP BY itens.id
-    LIMIT 4
   `;
 
   db.query(sql, (err, result) => {
@@ -123,5 +122,56 @@ app.post('/novo-item', upload.single('imagem'), (req, res) => {
 
       res.json({ message: 'Item cadastrado com sucesso!', itemId });
     });
+  });
+});
+app.get('/buscar-itens', (req, res) => {
+  const { categoria, cidade, precoMin, precoMax, dataIni, dataFim } = req.query;
+
+  let sql = `
+    SELECT itens.*, imagens.id AS imagem_id
+    FROM itens
+    LEFT JOIN imagens ON imagens.item_id = itens.id
+    WHERE 1 = 1
+  `;
+  const params = [];
+
+  if (categoria) {
+    sql += ' AND itens.categoria = ?';
+    params.push(categoria);
+  }
+
+  if (cidade) {
+    sql += ' AND itens.cidade = ?';
+    params.push(cidade);
+  }
+
+  if (precoMin) {
+    sql += ' AND itens.preco_diario >= ?';
+    params.push(parseFloat(precoMin));
+  }
+
+  if (precoMax) {
+    sql += ' AND itens.preco_diario <= ?';
+    params.push(parseFloat(precoMax));
+  }
+
+  if (dataIni && dataFim) {
+    sql += ` AND itens.id NOT IN (
+      SELECT item_id FROM alugueis
+      WHERE (? BETWEEN data_inicio AND data_fim OR ? BETWEEN data_inicio AND data_fim)
+    )`;
+    params.push(dataIni, dataFim);
+  }
+
+  sql += ' GROUP BY itens.id';
+
+  db.query(sql, params, (err, result) => {
+    if (err) {
+      console.error('Erro ao buscar itens com filtros:', err);
+      res.status(500).json({ error: 'Erro ao buscar itens com filtros' });
+      return;
+    }
+
+    res.json(result);
   });
 });

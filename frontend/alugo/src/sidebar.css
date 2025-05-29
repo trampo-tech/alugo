@@ -1,0 +1,40 @@
+.sidebar-filters {
+  width: 240px;
+  background-color: #f8fafc;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar-filters h2 {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.sidebar-filters label {
+  display: block;
+  margin-top: 12px;
+  font-weight: 500;
+}
+
+.sidebar-filters select,
+.sidebar-filters input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #fff;
+}
+
+.sidebar-filters button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
