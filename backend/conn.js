@@ -2,12 +2,14 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 const db = require('./db');
-require('dotenv').config();
-
+const categoriaRoutes = require('./Routes/categoria');
 const app = express();
+
+require('dotenv').config();
 
 app.use(cors());
 app.use(express.json());
+app.use('/categorias', categoriaRoutes);
 
 // Configura o multer para armazenar imagens em memória (BLOB)
 const storage = multer.memoryStorage();
