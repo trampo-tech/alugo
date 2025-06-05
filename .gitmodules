@@ -1,0 +1,3 @@
+[submodule "backend/Services/hybrid-search-engine"]
+	path = backend/Services/hybrid-search-engine
+	url = https://github.com/trampo-tech/hybrid-search-engine.git
