@@ -10,3 +10,41 @@
   gap: 24px;
   flex: 1;
 }
+
+/* Novo estilo para a barra de pesquisa na página de listagem */
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* Espaçamento entre a barra de pesquisa e os itens */
+}
+
+.search-bar-list-page {
+  display: flex;
+  max-width: 600px; /* Adapte ao tamanho que desejar */
+  margin: 0 auto; /* Centraliza a barra de pesquisa */
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.search-bar-list-page input {
+  flex: 1;
+  padding: 10px 15px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+.search-bar-list-page button {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-bar-list-page button:hover {
+  background-color: #2563eb;
+}
