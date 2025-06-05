@@ -23,7 +23,6 @@ app.listen(PORT, () => {
 
 // ================== ROTAS ================== //
 
-// ✅ Exibição de itens na landing page (com uma imagem por item)
 app.get('/itens', (req, res) => {
   const sql = `
     SELECT 
@@ -46,7 +45,6 @@ app.get('/itens', (req, res) => {
 });
 
 
-// ✅ Exibição de itens por categoria
 app.get('/categoria', (req, res) => {
   const sql = `
     SELECT itens.*, imagens.id AS imagem_id
@@ -67,7 +65,6 @@ app.get('/categoria', (req, res) => {
   });
 });
 
-// ✅ Rota para buscar a imagem binária
 app.get('/imagem/:id', (req, res) => {
   const { id } = req.params;
   const sql = 'SELECT imagem, tipo FROM imagens WHERE id = ?';
@@ -89,7 +86,6 @@ app.get('/imagem/:id', (req, res) => {
   });
 });
 
-// ✅ Rota para inserir novo item + imagem
 app.post('/novo-item', upload.single('imagem'), (req, res) => {
   const { titulo, descricao, categoria, preco_diario, condicoes_uso, usuario_id } = req.body;
   const imagem = req.file.buffer;
