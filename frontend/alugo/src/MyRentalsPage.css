@@ -1,0 +1,84 @@
+/* alugo/frontend/alugo/src/MyRentalsPage.css */
+
+.my-rentals-page {
+  /* Pode adicionar estilos específicos para a página de aluguéis se precisar */
+  /* Por exemplo, um fundo ligeiramente diferente, ou espaçamento */
+  padding: 40px 20px;
+}
+
+.rental-card {
+  /* Ajustes específicos para o card de aluguel se necessário */
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Empurra o rodapé para baixo */
+  align-items: flex-start; /* Alinha o texto à esquerda dentro do card */
+  text-align: left; /* Alinha o texto à esquerda */
+  padding: 20px;
+  min-height: 450px; /* Garante uma altura mínima para todos os cards */
+}
+
+.rental-card h3 {
+  width: 100%; /* Ocupa a largura total para alinhamento */
+  text-align: center; /* Centraliza o título do item */
+}
+
+.rental-dates,
+.rental-value {
+  width: 100%;
+  font-size: 1.1rem;
+  color: var(--preto-texto);
+  margin-bottom: 5px;
+}
+
+.rental-dates span,
+.rental-value span {
+  font-weight: bold;
+  color: var(--azul-principal); /* Datas e valores em azul */
+}
+
+.rental-status {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 5px 10px;
+  border-radius: 5px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  align-self: center; /* Centraliza o status dentro do card */
+}
+
+.rental-status.status-pendente {
+  background-color: var(--amarelo-destaque);
+  color: #856404; /* Cor de texto para o amarelo */
+}
+
+.rental-status.status-ativo {
+  background-color: var(--verde-acao);
+  color: var(--branco-puro);
+}
+
+.rental-status.status-concluido,
+.rental-status.status-cancelado {
+  background-color: var(--cinza-borda-claro);
+  color: var(--cinza-texto-secundario);
+}
+
+.locador-info {
+  width: 100%;
+  margin-top: auto; /* Empurra para o final do card */
+  padding-top: 15px;
+  border-top: 1px solid var(--cinza-borda-claro);
+  text-align: left;
+}
+
+.locador-info h4 {
+  font-size: 1rem;
+  color: var(--preto-texto);
+  margin-bottom: 5px;
+}
+
+.locador-info p {
+  font-size: 0.9rem;
+  color: var(--cinza-texto-secundario);
+  margin-bottom: 3px;
+}

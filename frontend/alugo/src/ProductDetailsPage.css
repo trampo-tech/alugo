@@ -1,0 +1,218 @@
+/* alugo/frontend/alugo/src/ProductDetailsPage.css */
+
+.product-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 30px;
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 30px auto;
+  background-color: var(--cinza-fundo-claro);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.product-details-card {
+  background-color: var(--branco-puro);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+}
+
+.product-details-image {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.product-details-image-placeholder {
+  min-height: 250px;
+  font-size: 1.5rem;
+}
+
+.product-info {
+  text-align: center;
+  width: 100%;
+}
+
+.product-info h1 {
+  font-size: 2.5rem;
+  color: var(--preto-texto);
+  margin-bottom: 15px;
+}
+
+.product-category,
+.product-description,
+.product-conditions {
+  font-size: 1.1rem;
+  color: var(--cinza-texto-secundario);
+  margin-bottom: 10px;
+}
+
+.product-description {
+  margin-top: 20px;
+  line-height: 1.8;
+  color: var(--preto-texto);
+  text-align: justify;
+}
+
+.product-price {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--preto-texto);
+  margin: 20px 0;
+}
+
+.product-price span {
+  color: var(--verde-acao);
+}
+
+.product-status {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 25px;
+  padding: 5px 15px;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.product-status.status-disponivel {
+  background-color: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-texto);
+}
+
+.product-status.status-alugado,
+.product-status.status-alugado_pendente, /* Adicionado para status pendente */
+.product-status.status-em_andamento,    /* Adicionado para status em andamento */
+.product-status.status-concluido,       /* Se houver mais status */
+.product-status.status-cancelado,       /* Se houver mais status */
+.product-status.status-inativo {
+  background-color: var(--cor-erro-fundo);
+  color: var(--cor-erro-texto);
+}
+
+/* Estilos para a seleção de datas */
+.rental-dates-selection {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+  width: 100%;
+}
+
+.rental-dates-selection label {
+  font-weight: bold;
+  color: var(--preto-texto);
+  margin-bottom: -10px; /* Ajusta o espaço entre o label e o input */
+}
+
+.rental-dates-selection input[type="date"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--cinza-borda-claro);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--preto-texto);
+  background-color: var(--branco-puro);
+}
+
+.rental-dates-selection input[type="date"]:focus {
+  border-color: var(--azul-principal);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+
+.product-details-card .primary {
+  width: auto;
+  padding: 12px 30px;
+  font-size: 1.1rem;
+  margin-top: 20px;
+}
+
+.product-details-card .primary:disabled {
+  background-color: var(--cinza-borda-claro);
+  cursor: not-allowed;
+  box-shadow: none;
+  color: var(--cinza-texto-secundario);
+}
+
+.product-details-card .feedback-message {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.owner-info-card {
+  background-color: var(--branco-puro);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  text-align: center;
+  width: 100%;
+}
+
+.owner-info-card h2 {
+  font-size: 1.8rem;
+  color: var(--preto-texto);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--cinza-borda-claro);
+  padding-bottom: 10px;
+}
+
+.owner-info-card p {
+  font-size: 1.1rem;
+  color: var(--cinza-texto-secundario);
+  margin-bottom: 8px;
+}
+
+.owner-info-card p span {
+  font-weight: bold;
+  color: var(--preto-texto);
+}
+
+/* Responsividade para telas maiores */
+@media (min-width: 768px) {
+  .product-details-card {
+    flex-direction: row;
+    text-align: left;
+    gap: 30px;
+    padding: 30px;
+  }
+
+  .product-details-image,
+  .product-details-image-placeholder {
+    width: 45%;
+    margin-bottom: 0;
+  }
+
+  .product-info {
+    width: 55%;
+    text-align: left;
+  }
+
+  .product-info h1 {
+    font-size: 2.8rem;
+  }
+
+  .product-price {
+    font-size: 2.2rem;
+  }
+
+  .rental-dates-selection {
+    flex-direction: row; /* Coloca os inputs de data lado a lado */
+    justify-content: space-between;
+  }
+  .rental-dates-selection label {
+    width: auto; /* Permite que o label ocupe apenas o espaço necessário */
+  }
+  .rental-dates-selection input[type="date"] {
+    width: calc(50% - 10px); /* Ajusta a largura para caberem lado a lado */
+  }
+}

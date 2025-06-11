@@ -1,52 +1,51 @@
+/* alugo/frontend/alugo/src/newItem.css */
+
 .novoitem-container {
-  max-width: 500px;
+  background-color: var(--branco-puro);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
   margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #e5e7eb;
-  border-radius: 10px;
-  background-color: white;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  text-align: center;
 }
 
 .novoitem-container h2 {
-  text-align: center;
-  margin-bottom: 20px;
+  font-size: 2.2rem;
+  color: var(--preto-texto);
+  margin-bottom: 30px;
 }
 
 .novoitem-container form {
   display: flex;
   flex-direction: column;
+  text-align: left;
 }
 
 .novoitem-container label {
-  margin-bottom: 5px;
   font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--preto-texto);
 }
 
-.novoitem-container input,
-.novoitem-container textarea {
-  margin-bottom: 15px;
-  padding: 8px;
-  border: 1px solid #94a3b8;
-  border-radius: 8px;
-}
-
-.novoitem-container button {
-  padding: 10px;
-  border: none;
-  border-radius: 8px;
-  background-color: #2563eb;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.novoitem-container button:hover {
-  background-color: #1e40af;
+.novoitem-container input[type="file"] {
+  padding: 10px 0;
 }
 
 .novoitem-container p {
-  text-align: center;
-  color: green;
-  margin-top: 10px;
+  margin-top: 20px;
+  font-weight: bold;
+  color: var(--preto-texto);
+}
+
+/* Estilo para links em formulários, como "Já tem conta?" */
+.novoitem-container .form-link {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: var(--preto-texto);
+}
+
+.novoitem-container .form-link a {
+  color: var(--azul-principal);
+  font-weight: bold;
 }

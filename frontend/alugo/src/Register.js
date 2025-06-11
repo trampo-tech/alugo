@@ -1,7 +1,9 @@
+// alugo/frontend/alugo/src/Register.js
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
+import './newItem.css';
 import { useNavigate } from 'react-router-dom';
-import './newItem.css'; // Reutilizando o CSS para layout de formulário
 
 function RegisterPage() {
   const [nome, setNome] = useState('');
@@ -11,77 +13,73 @@ function RegisterPage() {
   const [cpf, setCpf] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [genero, setGenero] = useState('');
-  const [tipoUsuario, setTipoUsuario] = useState('ambos'); // Valor padrão
+  const [tipoUsuario, setTipoUsuario] = useState('ambos');
   const [mensagem, setMensagem] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     setMensagem('');
 
+    if (!nome || !email || !senha) {
+      setMensagem('Nome, email e senha são campos obrigatórios.');
+      return;
+    }
+
     try {
-      const response = await axios.post('http://localhost:8080/register', {
+      const res = await axios.post('http://localhost:8080/register', {
         nome,
         email,
         senha,
-        telefone,
-        cpf,
-        data_nascimento: dataNascimento, // Garanta que o formato seja YYYY-MM-DD
-        genero,
+        telefone: telefone || null,
+        cpf: cpf || null,
+        data_nascimento: dataNascimento || null,
+        genero: genero || null,
         tipo_usuario: tipoUsuario,
-        // foto_perfil e endereco não estão no formulário inicial, mas podem ser adicionados
-        // status e data_criacao serão definidos no backend (DEFAULT CURRENT_TIMESTAMP)
-        // ultimo_login também será definido no backend
       });
 
-      if (response.data && response.data.sucesso) {
-        setMensagem('Cadastro realizado com sucesso! Você pode fazer login agora.');
-        // Limpar o formulário
-        setNome('');
-        setEmail('');
-        setSenha('');
-        setTelefone('');
-        setCpf('');
-        setDataNascimento('');
-        setGenero('');
-        setTipoUsuario('ambos');
-        // Opcional: redirecionar para a página de login
+      if (res.data && res.data.sucesso) {
+        setMensagem('Cadastro realizado com sucesso! Redirecionando para o login...');
         setTimeout(() => {
           navigate('/login');
-        }, 2000); // Redireciona após 2 segundos
+        }, 2000);
       } else {
-        setMensagem(response.data.erro || 'Erro ao cadastrar usuário.');
+        setMensagem(res.data.erro || 'Erro ao cadastrar. Tente novamente.');
       }
-    } catch (error) {
-      console.error('Erro ao registrar usuário:', error.response?.data || error.message);
-      setMensagem('Erro ao cadastrar usuário. Verifique os dados e tente novamente.');
+    } catch (err) {
+      console.error("Erro na requisição de cadastro:", err);
+      if (err.response && err.response.data && err.response.data.erro) {
+        setMensagem(err.response.data.erro);
+      } else {
+        setMensagem('Erro ao cadastrar. Tente novamente.');
+      }
     }
   };
 
   return (
-    <div className="novoitem-container"> {/* Reutilizando o estilo do newItem */}
+    <div className="novoitem-container">
       <h2>Cadastro de Usuário</h2>
-      <form onSubmit={handleSubmit}>
-        <label>Nome:</label>
-        <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
+      <form onSubmit={handleRegister}>
+        <label htmlFor="nome">Nome:</label>
+        <input type="text" id="nome" value={nome} onChange={e => setNome(e.target.value)} required />
 
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <label htmlFor="email">Email:</label>
+        <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required />
 
-        <label>Senha:</label>
-        <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} required />
+        <label htmlFor="senha">Senha:</label>
+        <input type="password" id="senha" value={senha} onChange={e => setSenha(e.target.value)} required />
 
-        <label>Telefone:</label>
-        <input type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        <label htmlFor="telefone">Telefone (opcional):</label>
+        <input type="text" id="telefone" value={telefone} onChange={e => setTelefone(e.target.value)} />
 
-        <label>CPF:</label>
-        <input type="text" value={cpf} onChange={(e) => setCpf(e.target.value)} placeholder="Ex: 123.456.789-00" />
+        <label htmlFor="cpf">CPF (opcional):</label>
+        <input type="text" id="cpf" value={cpf} onChange={e => setCpf(e.target.value)} placeholder="000.000.000-00" />
 
-        <label>Data de Nascimento:</label>
-        <input type="date" value={dataNascimento} onChange={(e) => setDataNascimento(e.target.value)} />
+        <label htmlFor="dataNascimento">Data de Nascimento (opcional):</label>
+        <input type="date" id="dataNascimento" value={dataNascimento} onChange={e => setDataNascimento(e.target.value)} />
 
-        <label>Gênero:</label>
-        <select value={genero} onChange={(e) => setGenero(e.target.value)}>
+        <label htmlFor="genero">Gênero (opcional):</label>
+        <select id="genero" value={genero} onChange={e => setGenero(e.target.value)}>
           <option value="">Selecione</option>
           <option value="masculino">Masculino</option>
           <option value="feminino">Feminino</option>
@@ -89,16 +87,20 @@ function RegisterPage() {
           <option value="prefiro_nao_dizer">Prefiro não dizer</option>
         </select>
 
-        <label>Tipo de Usuário:</label>
-        <select value={tipoUsuario} onChange={(e) => setTipoUsuario(e.target.value)}>
+        <label htmlFor="tipoUsuario">Tipo de Usuário:</label>
+        <select id="tipoUsuario" value={tipoUsuario} onChange={e => setTipoUsuario(e.target.value)}>
           <option value="ambos">Locador e Locatário</option>
           <option value="locador">Apenas Locador</option>
           <option value="locatario">Apenas Locatário</option>
         </select>
 
-        <button type="submit">Cadastrar</button>
+        <button type="submit" className="primary">Cadastrar</button>
       </form>
-      {mensagem && <p>{mensagem}</p>}
+      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+
+      <p className="form-link">
+        Já tem uma conta? <a href="/login">Faça login aqui</a>
+      </p>
     </div>
   );
 }

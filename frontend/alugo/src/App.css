@@ -1,3 +1,5 @@
+/* alugo/frontend/alugo/src/App.css */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +8,8 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color: #f9fafb;
-    color: #111827;
+    background-color: var(--cinza-fundo-claro); /* Usando a nova cor */
+    color: var(--preto-texto); /* Usando a nova cor */
 }
 
 /* Header */
@@ -16,35 +18,99 @@ header {
     justify-content: space-between;
     align-items: center;
     padding: 20px 60px;
-    background-color: white;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: var(--branco-puro); /* Usando a nova cor */
+    border-bottom: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
 }
 
 header .logo {
     font-size: 1.8rem;
     font-weight: bold;
+    color: var(--azul-principal); /* Usando a nova cor */
 }
 
 header .buttons button {
     margin-left: 10px;
     padding: 8px 16px;
-    border: 1px solid #94a3b8;
-    background-color: white;
-    color: #111827;
+    border: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
+    background-color: var(--branco-puro); /* Usando a nova cor */
+    color: var(--preto-texto); /* Usando a nova cor */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 header .buttons button:hover {
-    background-color: #f1f5f9;
+    background-color: var(--cinza-fundo-claro); /* Usando a nova cor */
 }
+
+/* User Menu - Estilos para o menu suspenso */
+.user-menu-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--preto-texto); /* Cor para o ícone */
+  transition: color 0.3s ease;
+}
+
+.user-icon-button:hover {
+  color: var(--azul-principal);
+}
+
+.user-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: var(--branco-puro);
+  border: 1px solid var(--cinza-borda-claro);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  min-width: 180px;
+  z-index: 1000;
+  padding: 10px 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.user-dropdown-menu p {
+  padding: 8px 15px;
+  font-weight: bold;
+  color: var(--preto-texto);
+  border-bottom: 1px solid var(--cinza-borda-claro);
+  margin-bottom: 5px;
+}
+
+.user-dropdown-menu button {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 10px 15px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+  color: var(--preto-texto);
+}
+
+.user-dropdown-menu button:hover {
+  background-color: var(--cinza-fundo-claro);
+  color: var(--azul-principal);
+}
+
 
 /* Hero */
 .hero {
-    background-color: #e0f2f1;
-    padding: 120px; /* Aumenta verticalmente */
+    background-color: var(--azul-principal); /* Usando a nova cor */
+    padding: 120px;
     text-align: center;
+    color: var(--branco-puro); /* Texto em branco */
 }
 
 .hero h1 {
@@ -56,10 +122,10 @@ header .buttons button:hover {
     margin: 0 auto;
     max-width: 500px;
     display: flex;
-    background-color: white;
+    background-color: var(--branco-puro); /* Usando a nova cor */
     border-radius: 12px;
     overflow: hidden;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
 }
 
 .search-bar input {
@@ -68,11 +134,12 @@ header .buttons button:hover {
     border: none;
     outline: none;
     font-size: 1rem;
+    color: var(--preto-texto); /* Usando a nova cor */
 }
 
 .search-bar button {
-    background-color: #94a3b8;
-    color: white;
+    background-color: var(--azul-principal); /* Usando a nova cor */
+    color: var(--branco-puro); /* Usando a nova cor */
     border: none;
     padding: 12px 24px;
     cursor: pointer;
@@ -80,65 +147,36 @@ header .buttons button:hover {
 }
 
 .search-bar button:hover {
-    background-color: #64748b;
+    background-color: #0056b3; /* Tom mais escuro do azul */
 }
 
 /* Popular items */
 .popular {
     padding: 40px 60px;
     text-align: center;
+    background-color: var(--branco-puro); /* Fundo da seção */
+    margin: 30px auto; /* Centraliza e adiciona margem */
+    max-width: 1200px; /* Largura máxima */
+    border-radius: 12px; /* Bordas arredondadas para a seção */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); /* Sombra sutil */
 }
 
 .popular h2 {
     margin-bottom: 20px;
     font-size: 1.8rem;
+    color: var(--preto-texto); /* Usando a nova cor */
 }
 
 .items {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Mantido como antes */
     gap: 40px;
-    flex-wrap: wrap;
+    justify-content: center; /* Centraliza os itens */
     margin-top: 20px;
+    align-items: stretch; /* **NOVO: Estica os cards para a mesma altura** */
 }
 
-.card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 20px;
-    width: 220px;
-    text-align: center;
-    border: 1px solid #e2e8f0;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-}
-
-.card img {
-    width: 100%;
-    height: 150px;
-    object-fit: cover;
-    border-radius: 8px;
-}
-.card .name {
-    font-weight: bold;
-    margin-bottom: 6px;
-    font-size: 1.1rem;
-}
-
-.card .price {
-    color: #334155;
-    font-weight: 500;
-}
-
-.card .price span {
-    color: #64748b;
-    font-size: 0.9rem;
-}
+/* Os estilos .card serão definidos em card.css para consistência */
 
 /* Actions */
 .actions {
@@ -147,16 +185,18 @@ header .buttons button:hover {
     justify-content: center;
     padding: 40px 60px;
     flex-wrap: wrap;
+    background-color: var(--cinza-fundo-claro); /* Fundo da seção de ações */
 }
 
 .card-action {
-    background-color: white;
+    background-color: var(--branco-puro); /* Usando a nova cor */
     border-radius: 12px;
     padding: 24px;
     width: 280px;
-    border: 1px solid #e2e8f0;
+    border: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
     text-align: center;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); /* Sombra padrão */
 }
 
 
@@ -167,20 +207,21 @@ header .buttons button:hover {
 
 .card-action h3 {
     margin-bottom: 16px;
+    color: var(--preto-texto); /* Usando a nova cor */
 }
 
 .card-action button {
     padding: 8px 16px;
-    border: 1px solid #94a3b8;
-    background-color: white;
-    color: #111827;
+    border: 1px solid var(--azul-principal); /* Usando a nova cor para a borda */
+    background-color: var(--azul-principal); /* Usando a nova cor para o fundo */
+    color: var(--branco-puro); /* Usando a nova cor */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .card-action button:hover {
-    background-color: #f1f5f9;
+    background-color: #0056b3; /* Tom mais escuro do azul */
 }
 
 .header-buttons {
@@ -190,14 +231,15 @@ header .buttons button:hover {
 
 .outline {
     padding: 8px 16px;
-    border: 1px solid #94a3b8;
-    background-color: white;
-    color: #111827;
+    border: 1px solid var(--azul-principal); /* Usando a nova cor */
+    background-color: var(--branco-puro); /* Usando a nova cor */
+    color: var(--azul-principal); /* Usando a nova cor */
     border-radius: 8px;
     cursor: pointer;
     transition: background-color 0.2s;
 }
 
 .outline:hover {
-    background-color: #f1f5f9;
+    background-color: var(--cinza-fundo-claro); /* Usando a nova cor */
+    color: var(--azul-principal); /* Mantém o texto azul */
 }

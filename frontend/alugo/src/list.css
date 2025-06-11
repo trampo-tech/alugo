@@ -1,50 +1,103 @@
+/* alugo/frontend/alugo/src/list.css */
+
 .itens-page {
   display: flex;
-  padding: 40px;
-  gap: 32px;
+  flex-direction: column;
+  padding: 30px 20px;
+  max-width: 1200px;
+  margin: 30px auto;
+  gap: 30px;
+  background-color: var(--branco-puro);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.itens-page h2 {
+  font-size: 2.2rem;
+  color: var(--preto-texto);
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.sidebar-filters {
+  background-color: var(--cinza-fundo-claro);
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  min-width: 250px;
+  align-self: flex-start;
+}
+
+.sidebar-filters h3 {
+  font-size: 1.5rem;
+  color: var(--preto-texto);
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--cinza-borda-claro);
+  padding-bottom: 10px;
+}
+
+.sidebar-filters label {
+  font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+  color: var(--preto-texto);
+}
+
+.sidebar-filters button {
+  width: 100%;
+  margin-top: 10px;
+  padding: 12px 20px;
+  font-size: 1rem;
+  background-color: var(--azul-principal);
+  color: var(--branco-puro);
+  border-radius: 8px;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-filters button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .listagem-itens {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 24px;
-  flex: 1;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Mantido minmax(250px, 1fr) */
+  gap: 24px; /* Mantido o gap original */
+  justify-content: center;
+  align-items: stretch; /* **Crucial: Garante que os itens da grid se estiquem para a mesma altura** */
+  flex-grow: 1;
 }
 
-/* Novo estilo para a barra de pesquisa na página de listagem */
-.main-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 24px; /* Espaçamento entre a barra de pesquisa e os itens */
+/* Os estilos .item-card vêm de card.css, então não precisam ser repetidos aqui */
+
+/* Responsividade para listagem */
+@media (min-width: 769px) {
+  .itens-page {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .sidebar-filters {
+    position: sticky;
+    top: 90px;
+    height: fit-content;
+  }
 }
 
-.search-bar-list-page {
-  display: flex;
-  max-width: 600px; /* Adapte ao tamanho que desejar */
-  margin: 0 auto; /* Centraliza a barra de pesquisa */
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  overflow: hidden;
-}
+@media (max-width: 768px) {
+  .itens-page {
+    flex-direction: column;
+    margin-top: 20px;
+  }
 
-.search-bar-list-page input {
-  flex: 1;
-  padding: 10px 15px;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-}
+  .sidebar-filters {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-.search-bar-list-page button {
-  background-color: #3b82f6;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-}
-
-.search-bar-list-page button:hover {
-  background-color: #2563eb;
+  .listagem-itens {
+    grid-template-columns: 1fr;
+  }
 }
