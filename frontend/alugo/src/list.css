@@ -2,7 +2,7 @@
 
 .itens-page {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Padrão mobile */
   padding: 30px 20px;
   max-width: 1200px;
   margin: 30px auto;
@@ -17,6 +17,64 @@
   color: var(--preto-texto);
   margin-bottom: 20px;
   text-align: center;
+}
+
+/* Estilos para a nova barra de pesquisa na página de listagem */
+.list-page-search-bar {
+  display: flex;
+  width: 100%;
+  max-width: 600px; /* Alinhar com a largura da barra da página principal */
+  background-color: var(--branco-puro);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); /* Sombra mais suave que a do hero */
+  margin: 0 auto 30px auto; /* Centraliza e adiciona margem inferior */
+}
+
+.list-page-search-bar input {
+  flex-grow: 1;
+  border: none;
+  padding: 12px 20px;
+  font-size: 1.1rem;
+  color: var(--preto-texto);
+  outline: none;
+  background-color: transparent;
+  margin-bottom: 0; /* Reseta margem de input global */
+}
+
+.list-page-search-bar input::placeholder {
+  color: var(--cinza-texto-secundario);
+}
+
+.list-page-search-bar button {
+  background-color: var(--azul-principal); /* Usando o azul principal */
+  color: var(--branco-puro);
+  padding: 12px 25px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  border-radius: 0 8px 8px 0;
+  transition: background-color 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: none; /* Remove a sombra do botão padrão */
+}
+
+.list-page-search-bar button:hover {
+  background-color: #0056b3; /* Tom mais escuro do azul */
+}
+
+/* Novo contêiner para sidebar e listagem de itens */
+.list-content-container {
+  display: flex;
+  flex-direction: column; /* Padrão mobile */
+  gap: 30px;
+  width: 100%;
+}
+
+@media (min-width: 769px) {
+  .list-content-container {
+    flex-direction: row; /* Coluna no desktop */
+    align-items: flex-start;
+  }
 }
 
 .sidebar-filters {
@@ -63,20 +121,57 @@
 
 .listagem-itens {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); /* Mantido minmax(250px, 1fr) */
-  gap: 24px; /* Mantido o gap original */
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
   justify-content: center;
-  align-items: stretch; /* **Crucial: Garante que os itens da grid se estiquem para a mesma altura** */
+  align-items: stretch;
   flex-grow: 1;
 }
 
-/* Os estilos .item-card vêm de card.css, então não precisam ser repetidos aqui */
+/* Estilo para a exibição de status dentro do card de item */
+.item-card .status-display {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  align-self: center; /* Centraliza o status no card */
+  /* Cores de status específicas, reutilizando as variáveis */
+}
+
+/* Cores específicas para os status dos itens na listagem */
+.item-card .status-display span {
+  /* Estilo base para o texto do status */
+  display: block;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.item-card .status-display span:contains("Disponível") {
+  background-color: var(--cor-sucesso-fundo);
+  color: var(--cor-sucesso-texto);
+}
+
+.item-card .status-display span:contains("Alugado") {
+  background-color: var(--cor-erro-fundo); /* Pode ser um vermelho mais suave */
+  color: var(--cor-erro-texto);
+}
+
+.item-card .status-display span:contains("Inativo") {
+  background-color: var(--cinza-borda-claro);
+  color: var(--cinza-texto-secundario);
+}
+
+.item-card .status-display span:contains("Aguardando Confirmação") {
+  background-color: var(--amarelo-destaque);
+  color: #856404; /* Cor de texto para o amarelo */
+}
 
 /* Responsividade para listagem */
 @media (min-width: 769px) {
   .itens-page {
-    flex-direction: row;
-    align-items: flex-start;
+    flex-direction: column; /* Manter a página como coluna no desktop */
   }
 
   .sidebar-filters {
@@ -87,8 +182,19 @@
 }
 
 @media (max-width: 768px) {
-  .itens-page {
+  .list-page-search-bar {
     flex-direction: column;
+    margin-bottom: 20px;
+  }
+
+  .list-page-search-bar button {
+    border-radius: 0 0 8px 8px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .itens-page {
+    padding: 20px;
     margin-top: 20px;
   }
 

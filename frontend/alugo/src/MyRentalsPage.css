@@ -1,26 +1,23 @@
 /* alugo/frontend/alugo/src/MyRentalsPage.css */
 
 .my-rentals-page {
-  /* Pode adicionar estilos específicos para a página de aluguéis se precisar */
-  /* Por exemplo, um fundo ligeiramente diferente, ou espaçamento */
   padding: 40px 20px;
 }
 
 .rental-card {
-  /* Ajustes específicos para o card de aluguel se necessário */
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Empurra o rodapé para baixo */
-  align-items: flex-start; /* Alinha o texto à esquerda dentro do card */
-  text-align: left; /* Alinha o texto à esquerda */
+  justify-content: space-between;
+  align-items: flex-start;
+  text-align: left;
   padding: 20px;
-  min-height: 450px; /* Garante uma altura mínima para todos os cards */
+  min-height: 450px;
 }
 
 .rental-card h3 {
-  width: 100%; /* Ocupa a largura total para alinhamento */
-  text-align: center; /* Centraliza o título do item */
+  width: 100%;
+  text-align: center;
 }
 
 .rental-dates,
@@ -34,7 +31,7 @@
 .rental-dates span,
 .rental-value span {
   font-weight: bold;
-  color: var(--azul-principal); /* Datas e valores em azul */
+  color: var(--azul-principal);
 }
 
 .rental-status {
@@ -44,28 +41,34 @@
   border-radius: 5px;
   margin-top: 10px;
   margin-bottom: 20px;
-  align-self: center; /* Centraliza o status dentro do card */
+  align-self: center;
 }
 
 .rental-status.status-pendente {
   background-color: var(--amarelo-destaque);
-  color: #856404; /* Cor de texto para o amarelo */
+  color: #856404;
 }
 
-.rental-status.status-ativo {
-  background-color: var(--verde-acao);
-  color: var(--branco-puro);
+.rental-status.status-ativo, /* Manter para 'ativo' se o ENUM tiver, embora 'em_andamento' seja o principal */
+.rental-status.status-em_andamento { /* **NOVO: Cor mais amigável para em_andamento** */
+  background-color: var(--verde-acao); /* Usando o verde de ação */
+  color: var(--branco-puro); /* Texto branco para bom contraste */
 }
 
-.rental-status.status-concluido,
-.rental-status.status-cancelado {
+.rental-status.status-concluido {
   background-color: var(--cinza-borda-claro);
   color: var(--cinza-texto-secundario);
 }
 
+.rental-status.status-cancelado {
+  background-color: var(--vermelho-alerta); /* Cancelado em vermelho */
+  color: var(--branco-puro);
+}
+
+
 .locador-info {
   width: 100%;
-  margin-top: auto; /* Empurra para o final do card */
+  margin-top: auto;
   padding-top: 15px;
   border-top: 1px solid var(--cinza-borda-claro);
   text-align: left;

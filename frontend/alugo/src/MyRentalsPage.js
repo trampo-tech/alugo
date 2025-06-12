@@ -22,6 +22,7 @@ function MyRentalsPage() {
 
     const fetchMyRentals = async () => {
       try {
+        // Agora buscando da rota que usa 'pedidos'
         const response = await axios.get(`http://localhost:8080/my-rentals/${loggedInUser.id}`);
         setMyRentals(response.data);
         setLoading(false);
@@ -40,9 +41,11 @@ function MyRentalsPage() {
   };
 
   const formatDate = (dateString) => {
+    // Garante que o input seja um formato de data válido antes de criar um objeto Date
     if (!dateString) return 'N/A';
     try {
       const date = new Date(dateString);
+      // Verifica se a data é válida antes de formatar
       if (isNaN(date.getTime())) {
         return 'Data Inválida';
       }
@@ -51,6 +54,22 @@ function MyRentalsPage() {
     } catch (e) {
       console.error("Erro ao formatar data:", e);
       return 'Erro de Formato';
+    }
+  };
+
+  // Função para traduzir o status do pedido para uma mensagem amigável
+  const getFriendlyStatus = (status) => {
+    switch (status) {
+      case 'pendente':
+        return 'Pendente';
+      case 'em_andamento':
+        return 'Em Andamento'; // Mensagem mais amigável
+      case 'concluido':
+        return 'Concluído';
+      case 'cancelado':
+        return 'Cancelado';
+      default:
+        return status;
     }
   };
 
@@ -68,7 +87,7 @@ function MyRentalsPage() {
       {myRentals.length === 0 ? (
         <p>Você não possui aluguéis registrados no momento.</p>
       ) : (
-        <div className="listagem-itens">
+        <div className="listagem-itens"> {/* Reutiliza a classe para grid de itens */}
           {myRentals.map((rental) => (
             <div key={rental.pedido_id} className="item-card rental-card" onClick={() => handleItemClick(rental.item_id)} style={{ cursor: 'pointer' }}>
               {rental.item_imagem_id ? (
@@ -86,7 +105,7 @@ function MyRentalsPage() {
                 Até: <span>{formatDate(rental.data_fim)}</span>
               </p>
               <p className="rental-value">Total: <span>R${parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</span></p>
-              <p className={`rental-status status-${rental.pedido_status}`}>Status: {rental.pedido_status}</p>
+              <p className={`rental-status status-${rental.pedido_status}`}>Status: {getFriendlyStatus(rental.pedido_status)}</p> {/* Usando a função de tradução */}
               <div className="locador-info">
                 <h4>Proprietário do Item:</h4>
                 <p>Nome: {rental.locador_nome}</p>

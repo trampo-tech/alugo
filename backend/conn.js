@@ -22,9 +22,19 @@ app.listen(PORT, () => {
 
 const HYBRID_SEARCH_URL = process.env.HYBRID_SEARCH_URL || 'http://localhost:8000';
 
+// Função para formatar o CPF para XXX.XXX.XXX-XX (mantida)
+function formatCpfToDb(cpf) {
+  if (!cpf) return null;
+  const cleanedCpf = cpf.replace(/\D/g, '');
+  if (cleanedCpf.length === 11) {
+    return cleanedCpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, '$1.$2.$3-$4');
+  }
+  return cleanedCpf;
+}
+
 // ================== ROTAS ================== //
 
-// Rota de Login
+// Rota de Login (mantida)
 app.post('/login', (req, res) => {
   const { email, senha } = req.body;
 
@@ -59,7 +69,7 @@ app.post('/login', (req, res) => {
   });
 });
 
-// Rota de Registro
+// Rota de Registro (mantida)
 app.post('/register', (req, res) => {
   const { nome, email, senha, telefone, cpf, data_nascimento, genero, tipo_usuario, endereco } = req.body;
 
@@ -68,12 +78,13 @@ app.post('/register', (req, res) => {
   }
 
   const plainTextPassword = senha;
+  const formattedCpf = formatCpfToDb(cpf);
 
   const query = `
     INSERT INTO usuarios (nome, email, senha, telefone, cpf, data_nascimento, genero, tipo_usuario, endereco)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
   `;
-  const values = [nome, email, plainTextPassword, telefone || null, cpf || null, data_nascimento || null, genero || null, tipo_usuario, endereco || null];
+  const values = [nome, email, plainTextPassword, telefone || null, formattedCpf, data_nascimento || null, genero || null, tipo_usuario, endereco || null];
 
   db.query(query, values, (err, result) => {
     if (err) {
@@ -92,7 +103,7 @@ app.post('/register', (req, res) => {
   });
 });
 
-// Rota para buscar informações do perfil do usuário
+// Rota para buscar informações do perfil do usuário (mantida)
 app.get('/profile/:id', (req, res) => {
   const { id } = req.params;
   const query = 'SELECT id, nome, email, telefone, cpf, data_nascimento, genero, endereco, tipo_usuario FROM usuarios WHERE id = ?';
@@ -108,7 +119,7 @@ app.get('/profile/:id', (req, res) => {
   });
 });
 
-// Rota para atualizar informações do perfil do usuário
+// Rota para atualizar informações do perfil do usuário (mantida)
 app.put('/profile/:id', (req, res) => {
   const { id } = req.params;
   const { nome, email, senha, telefone, endereco } = req.body;
@@ -157,7 +168,7 @@ app.put('/profile/:id', (req, res) => {
 });
 
 
-// Rota para buscar itens de um usuário específico
+// Rota para buscar itens de um usuário específico (mantida)
 app.get('/user-items/:userId', (req, res) => {
   const { userId } = req.params;
   const query = `
@@ -176,7 +187,7 @@ app.get('/user-items/:userId', (req, res) => {
   });
 });
 
-// Rota para atualizar um item existente (PUT /itens/:id)
+// Rota para atualizar um item existente (PUT /itens/:id) (mantida)
 app.put('/itens/:id', upload.single('imagem'), (req, res) => {
   const { id } = req.params;
   const { titulo, descricao, categoria, preco_diario, condicoes_uso } = req.body;
@@ -228,7 +239,7 @@ app.put('/itens/:id', upload.single('imagem'), (req, res) => {
   });
 });
 
-// Rota para deletar um item
+// Rota para deletar um item (mantida)
 app.delete('/itens/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM imagens WHERE item_id = ?', [id], (errImageDelete) => {
@@ -250,7 +261,7 @@ app.delete('/itens/:id', (req, res) => {
 });
 
 
-// Rota para buscar detalhes de um item específico e seu proprietário
+// Rota para buscar detalhes de um item específico e seu proprietário (mantida)
 app.get('/itens/:id', async (req, res) => {
   const itemId = req.params.id;
 
@@ -287,7 +298,7 @@ app.get('/itens/:id', async (req, res) => {
   });
 });
 
-// Rota para buscar os pedidos (aluguéis) de um usuário onde ele é o locatário
+// Rota para buscar os pedidos (aluguéis) de um usuário onde ele é o locatário (mantida)
 app.get('/my-rentals/:userId', (req, res) => {
   const { userId } = req.params;
   const query = `
@@ -321,7 +332,7 @@ app.get('/my-rentals/:userId', (req, res) => {
   });
 });
 
-// Rota para buscar os pedidos (aluguéis) recebidos pelos itens de um usuário
+// Rota para buscar os pedidos (aluguéis) recebidos pelos itens de um usuário (mantida)
 app.get('/my-product-rentals/:userId', (req, res) => {
   const { userId } = req.params;
   const query = `
@@ -355,7 +366,7 @@ app.get('/my-product-rentals/:userId', (req, res) => {
 });
 
 
-// Rota para criar um novo pedido de aluguel
+// Rota para criar um novo pedido de aluguel (CORRIGIDO o status do item)
 app.post('/rentals', async (req, res) => {
   const { item_id, locatario_id, locador_id, data_inicio, data_fim } = req.body;
 
@@ -377,6 +388,7 @@ app.post('/rentals', async (req, res) => {
     const itemPrecoDiario = parseFloat(itemResults[0].preco_diario);
     const itemStatusAtual = itemResults[0].status;
 
+    // Se o item não está disponível para aluguel, impeça o pedido
     if (itemStatusAtual !== 'disponivel') {
       return res.status(400).json({ sucesso: false, erro: `Este item não está disponível para aluguel. Status atual: ${itemStatusAtual}.` });
     }
@@ -393,7 +405,7 @@ app.post('/rentals', async (req, res) => {
 
     const valor_total = (itemPrecoDiario * diffDays).toFixed(2);
 
-    // 2. Inserir o pedido na tabela 'pedidos'
+    // 2. Inserir o pedido na tabela 'pedidos' com status 'pendente'
     const insertPedidoQuery = `
       INSERT INTO pedidos (item_id, locador_id, locatario_id, data_inicio, data_fim, valor_total, status)
       VALUES (?, ?, ?, ?, ?, ?, ?)
@@ -408,23 +420,14 @@ app.post('/rentals', async (req, res) => {
 
       const pedidoId = result.insertId;
 
-      // 3. Opcional: Atualizar o status do item para 'alugado' (ou 'em_andamento' dependendo do seu ENUM)
-      // Usando 'alugado' que está presente no seu ENUM.
-      const updateItemStatusQuery = 'UPDATE itens SET status = ? WHERE id = ?';
-      const novoStatusItem = 'alugado'; // Usando um valor permitido pelo ENUM
-
-      db.query(updateItemStatusQuery, [novoStatusItem, item_id], (errUpdate, updateResult) => {
-        if (errUpdate) {
-          console.error('Erro ao atualizar status do item após pedido:', errUpdate);
-          // Não impede o sucesso do aluguel, mas registra o erro
-        }
-        res.status(201).json({
-          sucesso: true,
-          mensagem: 'Aluguel solicitado com sucesso!',
-          pedido_id: pedidoId,
-          novo_status_item: novoStatusItem,
-          valor_total: valor_total
-        });
+      // Importante: NÃO ATUALIZAR O STATUS DO ITEM AQUI. Ele só muda para 'alugado' após aprovação.
+      // O frontend receberá 'pendente' para o pedido, e o item continuará 'disponivel'.
+      res.status(201).json({
+        sucesso: true,
+        mensagem: 'Aluguel solicitado com sucesso! Aguardando aprovação do proprietário.',
+        pedido_id: pedidoId,
+        novo_status_item: 'disponivel', // Confirma que o item permanece disponível (para o frontend)
+        valor_total: valor_total
       });
     });
   });
@@ -433,26 +436,26 @@ app.post('/rentals', async (req, res) => {
 // Rota para aprovar um pedido de aluguel
 app.put('/pedidos/:pedidoId/approve', (req, res) => {
   const { pedidoId } = req.params;
-  const { item_id } = req.body; // Necessário para atualizar o status do item, se houver
+  const { item_id } = req.body; // Necessário para atualizar o status do item
 
   if (!item_id) {
     return res.status(400).json({ sucesso: false, erro: 'item_id é necessário para aprovação do pedido.' });
   }
 
-  // 1. Atualizar o status do pedido para 'em_andamento'
+  // 1. Atualizar o status do pedido para 'em_andamento' (se for 'pendente')
   const updatePedidoStatusQuery = 'UPDATE pedidos SET status = ? WHERE id = ? AND status = ?';
   db.query(updatePedidoStatusQuery, ['em_andamento', pedidoId, 'pendente'], (err, result) => {
     if (err) {
-      console.error('Erro ao atualizar status do pedido:', err);
+      console.error('Erro ao atualizar status do pedido para aprovação:', err);
       return res.status(500).json({ sucesso: false, erro: 'Erro ao aprovar pedido.' });
     }
     if (result.affectedRows === 0) {
       return res.status(404).json({ sucesso: false, erro: 'Pedido não encontrado ou já foi aprovado/cancelado.' });
     }
 
-    // 2. Opcional: Atualizar o status do item para 'alugado' se ele ainda não estiver
-    const updateItemStatusQuery = 'UPDATE itens SET status = ? WHERE id = ? AND status = ?';
-    db.query(updateItemStatusQuery, ['alugado', item_id, 'alugado'], (errUpdate, updateResult) => { // Mantendo o status 'alugado'
+    // 2. Atualizar o status do item para 'alugado'
+    const updateItemStatusQuery = 'UPDATE itens SET status = ? WHERE id = ?';
+    db.query(updateItemStatusQuery, ['alugado', item_id], (errUpdate, updateResult) => {
         if (errUpdate) {
             console.error('Erro ao atualizar status do item após aprovação do pedido:', errUpdate);
         }
@@ -461,7 +464,7 @@ app.put('/pedidos/:pedidoId/approve', (req, res) => {
   });
 });
 
-// Rota para rejeitar um pedido de aluguel (Opcional, mas útil)
+// Rota para rejeitar um pedido de aluguel
 app.put('/pedidos/:pedidoId/reject', (req, res) => {
   const { pedidoId } = req.params;
   const { item_id } = req.body; // Necessário para reverter o status do item
@@ -470,11 +473,11 @@ app.put('/pedidos/:pedidoId/reject', (req, res) => {
     return res.status(400).json({ sucesso: false, erro: 'item_id é necessário para rejeição do pedido.' });
   }
 
-  // 1. Atualizar o status do pedido para 'cancelado'
+  // 1. Atualizar o status do pedido para 'cancelado' (se for 'pendente')
   const updatePedidoStatusQuery = 'UPDATE pedidos SET status = ? WHERE id = ? AND status = ?';
   db.query(updatePedidoStatusQuery, ['cancelado', pedidoId, 'pendente'], (err, result) => {
     if (err) {
-      console.error('Erro ao atualizar status do pedido para cancelado:', err);
+      console.error('Erro ao atualizar status do pedido para rejeição:', err);
       return res.status(500).json({ sucesso: false, erro: 'Erro ao rejeitar pedido.' });
     }
     if (result.affectedRows === 0) {
@@ -482,8 +485,8 @@ app.put('/pedidos/:pedidoId/reject', (req, res) => {
     }
 
     // 2. Reverter o status do item para 'disponivel'
-    const updateItemStatusQuery = 'UPDATE itens SET status = ? WHERE id = ? AND status = ?';
-    db.query(updateItemStatusQuery, ['disponivel', item_id, 'alugado'], (errUpdate, updateResult) => {
+    const updateItemStatusQuery = 'UPDATE itens SET status = ? WHERE id = ?';
+    db.query(updateItemStatusQuery, ['disponivel', item_id], (errUpdate, updateResult) => {
         if (errUpdate) {
             console.error('Erro ao reverter status do item após rejeição do pedido:', errUpdate);
         }
@@ -597,9 +600,9 @@ app.post('/novo-item', upload.single('imagem'), (req, res) => {
   });
 });
 
-// Rota para buscar itens usando o serviço de busca híbrida
+// Rota para buscar itens usando o serviço de busca híbrida (CORRIGIDA para incluir imagem_id e filtros de status)
 app.get('/buscar-itens', async (req, res) => {
-  const { query: searchTerm, categoria, precoMin, precoMax, dataInicial, dataFinal } = req.query;
+  const { query: searchTerm, categoria, precoMin, precoMax, dataInicial, dataFinal, status } = req.query;
   const table_name = 'itens';
 
   let filters = '';
@@ -616,14 +619,56 @@ app.get('/buscar-itens', async (req, res) => {
     filters += `preco_diario:${precoMin}-${precoMax},`;
   }
 
-  if (dataInicial) {
-    filters += `created_at:${dataInicial}-,`;
-  }
-  if (dataFinal) {
-    filters += `created_at:-${dataFinal},`;
-  }
+  // Lógica para filtrar por datas de disponibilidade (período que o item *não* está alugado)
+  let dateFilterSql = '';
+  const dateFilterParams = [];
+
   if (dataInicial && dataFinal) {
-    filters += `created_at:${dataInicial}-${dataFinal},`;
+      // Itens que estão disponíveis OU que não têm pedidos sobrepostos no período
+      dateFilterSql = `
+          AND (
+              i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
+                  SELECT 1 FROM pedidos p
+                  WHERE p.item_id = i.id
+                  AND p.status IN ('pendente', 'em_andamento')
+                  AND (
+                      (p.data_inicio <= ? AND p.data_fim >= ?) OR
+                      (p.data_inicio >= ? AND p.data_inicio <= ?) OR
+                      (p.data_fim >= ? AND p.data_fim <= ?)
+                  )
+              )
+          )`;
+      dateFilterParams.push(dataFinal, dataInicial, dataInicial, dataFinal, dataInicial, dataFinal);
+  } else if (dataInicial) {
+      // Itens que estão disponíveis OU que não estão alugados a partir da data inicial
+      dateFilterSql = `
+          AND (
+              i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
+                  SELECT 1 FROM pedidos p
+                  WHERE p.item_id = i.id
+                  AND p.status IN ('pendente', 'em_andamento')
+                  AND p.data_fim >= ?
+              )
+          )`;
+      dateFilterParams.push(dataInicial);
+  } else if (dataFinal) {
+      // Itens que estão disponíveis OU que não estão alugados até a data final
+      dateFilterSql = `
+          AND (
+              i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
+                  SELECT 1 FROM pedidos p
+                  WHERE p.item_id = i.id
+                  AND p.status IN ('pendente', 'em_andamento')
+                  AND p.data_inicio <= ?
+              )
+          )`;
+      dateFilterParams.push(dataFinal);
+  }
+
+
+  // Adicionado filtro de status para a busca híbrida (se o search engine suportar)
+  if (status) {
+    filters += `status:${status},`;
   }
 
   filters = filters.endsWith(',') ? filters.slice(0, -1) : filters;
@@ -637,11 +682,39 @@ app.get('/buscar-itens', async (req, res) => {
       },
     });
 
-    const hybridSearchResults = hybridSearchResponse.data.results;
-    res.json(hybridSearchResults);
+    let hybridSearchResults = hybridSearchResponse.data.results;
+
+    if (!hybridSearchResults || hybridSearchResults.length === 0) {
+      return res.json([]);
+    }
+
+    const itemIds = hybridSearchResults.map(item => item.id);
+
+    // Buscar os detalhes completos dos itens (incluindo imagem_id) do seu próprio banco de dados
+    // E aplicar o filtro de disponibilidade de datas aqui
+    const detailedItemsQuery = `
+        SELECT i.*, (SELECT id FROM imagens WHERE imagens.item_id = i.id LIMIT 1) AS imagem_id
+        FROM itens i
+        WHERE i.id IN (?) ${dateFilterSql}
+    `;
+    
+    // Concatena os parâmetros para a query SQL (itemIds + dateFilterParams)
+    const queryParams = [itemIds, ...dateFilterParams];
+
+    db.query(detailedItemsQuery, queryParams, (err, detailedResults) => {
+      if (err) {
+        console.error('Erro ao buscar detalhes de itens após search híbrido:', err);
+        return res.status(500).json({ error: 'Erro ao obter detalhes dos itens buscados.' });
+      }
+
+      const detailedItemsMap = new Map(detailedResults.map(item => [item.id, item]));
+      const orderedResults = itemIds.map(id => detailedItemsMap.get(id)).filter(item => item !== undefined);
+
+      res.json(orderedResults);
+    });
 
   } catch (error) {
-    console.error('Erro ao chamar o serviço de busca híbrida:', error.response?.data || error.message);
+    console.error('Erro ao chamar o serviço de busca híbrida ou processar resultados:', error.response?.data || error.message);
     res.status(error.response?.status || 500).json({ error: 'Erro ao realizar a busca híbrida' });
   }
 });

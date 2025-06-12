@@ -19,8 +19,8 @@ function ProductDetailsPage() {
   const [error, setError] = useState(null);
   const [mensagemAluguel, setMensagemAluguel] = useState('');
 
-  const [dataInicio, setDataInicio] = useState(''); // Novo estado para data de início
-  const [dataFim, setDataFim] = useState('');     // Novo estado para data de fim
+  const [dataInicio, setDataInicio] = useState('');
+  const [dataFim, setDataFim] = useState('');
 
   useEffect(() => {
     const fetchProductDetails = async () => {
@@ -39,8 +39,8 @@ function ProductDetailsPage() {
     fetchProductDetails();
   }, [id]);
 
-  const handleAlugar = async () => { // Tornar assíncrona para requisição
-    setMensagemAluguel(''); // Limpa mensagens anteriores
+  const handleAlugar = async () => {
+    setMensagemAluguel('');
 
     if (!loggedInUser) {
       setMensagemAluguel('Você precisa estar logado para alugar um item.');
@@ -48,6 +48,8 @@ function ProductDetailsPage() {
       return;
     }
 
+    // Aqui, o status do item é verificado, mas ele permanecerá 'disponivel' no DB após a solicitação.
+    // Apenas o pedido é pendente.
     if (item.status !== 'disponivel') {
       setMensagemAluguel('Este item não está disponível para aluguel no momento.');
       return;
@@ -58,11 +60,10 @@ function ProductDetailsPage() {
       return;
     }
 
-    // Validação de datas: dataFim deve ser depois de dataInicio
     const inicio = new Date(dataInicio);
     const fim = new Date(dataFim);
     const hoje = new Date();
-    hoje.setHours(0,0,0,0); // Zera hora para comparar apenas a data
+    hoje.setHours(0,0,0,0);
 
     if (inicio < hoje) {
       setMensagemAluguel('A data de início não pode ser no passado.');
@@ -73,22 +74,20 @@ function ProductDetailsPage() {
       return;
     }
 
-    // Lógica para enviar requisição de aluguel para o backend
     try {
-      const response = await axios.post('http://localhost:8080/rentals', { // Nova rota POST
+      const response = await axios.post('http://localhost:8080/rentals', {
         item_id: item.id,
         locatario_id: loggedInUser.id,
-        locador_id: owner.id, // ID do proprietário do item
+        locador_id: owner.id,
         data_inicio: dataInicio,
         data_fim: dataFim,
-        // valor_total será calculado no backend
       });
 
       if (response.data && response.data.sucesso) {
-        setMensagemAluguel('Solicitação de aluguel enviada com sucesso! O proprietário será notificado.');
-        // Atualiza o status do item no frontend após sucesso no backend
-        setItem(prevItem => ({ ...prevItem, status: response.data.novo_status_item || 'em_andamento' }));
-        // Opcional: Limpar as datas ou redirecionar
+        setMensagemAluguel(response.data.mensagem); // Mensagem do backend
+        // Após solicitação, o status do ITEM AINDA É DISPONIVEL (para o locatário ver, o pedido está pendente)
+        // Não alteramos o status do item no frontend aqui para não confundir o locatário
+        // setItem(prevItem => ({ ...prevItem, status: response.data.novo_status_item || 'disponivel' }));
         setDataInicio('');
         setDataFim('');
       } else {
@@ -112,7 +111,6 @@ function ProductDetailsPage() {
     return <div className="product-details-container not-found">Produto não encontrado.</div>;
   }
 
-  // Desabilita o botão de alugar se for o próprio dono do produto
   const isOwner = loggedInUser && loggedInUser.id === owner.id;
   const canRent = item.status === 'disponivel' && !isOwner;
 
@@ -134,7 +132,9 @@ function ProductDetailsPage() {
           <p className="product-category">Categoria: {item.categoria}</p>
           <p className="product-description">{item.descricao}</p>
           <p className="product-price">Preço Diário: <span>R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}</span></p>
-          <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado_pendente' ? 'Aguardando Confirmação' : 'Alugado')}</p>
+          {/* O status do item aqui reflete o que o locador definiu para o item (disponivel, alugado, etc.) */}
+          {/* Para o locatário, um pedido pendente será visível na página 'Meus Aluguéis' */}
+          <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado' ? 'Alugado' : 'Status Desconhecido')}</p>
           {item.condicoes_uso && <p className="product-conditions">Condições de Uso: {item.condicoes_uso}</p>}
 
           {isOwner ? (
@@ -148,7 +148,7 @@ function ProductDetailsPage() {
                   id="dataInicio"
                   value={dataInicio}
                   onChange={(e) => setDataInicio(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]} // Impede seleção de datas passadas
+                  min={new Date().toISOString().split('T')[0]}
                 />
 
                 <label htmlFor="dataFim">Data de Fim:</label>
@@ -157,14 +157,14 @@ function ProductDetailsPage() {
                   id="dataFim"
                   value={dataFim}
                   onChange={(e) => setDataFim(e.target.value)}
-                  min={dataInicio || new Date().toISOString().split('T')[0]} // A data de fim não pode ser antes da de início ou do dia atual
+                  min={dataInicio || new Date().toISOString().split('T')[0]}
                 />
               </div>
 
               <button
                 className="primary"
                 onClick={handleAlugar}
-                disabled={!canRent || !dataInicio || !dataFim} // Desabilita se não puder alugar ou datas não selecionadas
+                disabled={!canRent || !dataInicio || !dataFim}
               >
                 {canRent ? 'Alugar Agora' : 'Indisponível para Aluguel'}
               </button>
