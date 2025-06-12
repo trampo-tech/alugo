@@ -3,66 +3,57 @@
 /* Contêiner principal da página Meus Produtos */
 .my-products-page-container {
   display: flex;
-  flex-direction: column; /* Padrão mobile: empilhar elementos */
-  gap: 30px; /* Espaçamento entre os elementos principais (botão voltar, sidebar, main-content) */
+  flex-direction: column; /* Padrão: empilhar o botão de voltar e o conteúdo */
+  gap: 30px; /* Espaçamento entre o botão de voltar e o resto do conteúdo */
   padding: 30px 20px;
-  max-width: 1200px; /* Largura máxima do conteúdo */
-  margin: 30px auto; /* Centraliza a página */
-  background-color: var(--branco-puro); /* Fundo branco para a página */
+  max-width: 1200px;
+  margin: 30px auto;
+  background-color: var(--branco-puro);
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-  position: relative; /* Necessário para posicionamento do botão de voltar */
+  position: relative;
 }
 
 /* Estilos para o contêiner do botão de voltar */
 .back-button-container {
-  width: 100%; /* Ocupa a largura total */
-  text-align: left; /* Alinha o botão à esquerda */
-  margin-bottom: 0; /* Remove a margem inferior para que o gap do container gerencie */
+  width: 100%;
+  text-align: left;
+  margin-bottom: 0; /* O gap do container pai gerencia o espaçamento */
 }
 
 .back-button-container button.outline {
-  display: inline-flex; /* Para alinhar o ícone e o texto na mesma linha */
+  display: inline-flex;
   align-items: center;
-  gap: 8px; /* Espaço entre o ícone e o texto */
+  gap: 8px;
   padding: 8px 15px;
   font-size: 0.95rem;
 }
 
-/* Container que envolve a sidebar e o main-content */
-.main-layout-content { /* Novo seletor para organizar sidebar e conteúdo principal */
+/* NOVO CONTÊINER: Envolve a barra lateral e o conteúdo principal */
+.my-products-main-content-wrapper {
   display: flex;
   flex-direction: column; /* Padrão mobile: sidebar acima do conteúdo */
-  gap: 30px; /* Espaçamento entre sidebar e main-content */
+  gap: 30px; /* Espaçamento entre sidebar e o main-content */
   width: 100%; /* Ocupa a largura total disponível */
 }
 
 @media (min-width: 768px) {
-  .my-products-page-container {
-    flex-direction: column; /* Manter como coluna no desktop, mas o .main-layout-content será row */
-  }
-
-  .main-layout-content {
+  .my-products-main-content-wrapper {
     flex-direction: row; /* Desktop: sidebar e main-content lado a lado */
     align-items: flex-start; /* Alinha os itens ao topo */
   }
 }
 
 .my-products-page-container .sidebar-filters {
-  flex-shrink: 0; /* Não permite que a sidebar encolha */
-  width: 100%; /* Largura total no mobile */
+  flex-shrink: 0; /* Impede que a sidebar encolha */
+  width: 100%; /* Ocupa a largura total no mobile */
   max-width: 280px; /* Largura fixa no desktop */
-  margin-bottom: 0; /* Removido margem inferior, gap do container gerencia */
+  /* As margens entre a sidebar e o main-content são controladas pelo gap do .my-products-main-content-wrapper */
 }
 
-@media (min-width: 768px) {
-  .my-products-page-container .sidebar-filters {
-    margin-right: 0; /* Removido margem direita, gap do container gerencia */
-  }
-}
-
+/* Ajustes para o main-content que contém as seções de itens e pedidos recebidos */
 .main-content {
-  flex-grow: 1; /* Ocupa o espaço restante */
+  flex-grow: 1; /* Permite que ocupe o espaço restante */
   display: flex;
   flex-direction: column;
   gap: 40px; /* Espaçamento entre as seções de itens e pedidos */
@@ -73,7 +64,7 @@
   background-color: var(--cinza-fundo-claro);
   padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
 }
 
 .my-items-section h3,
@@ -90,7 +81,7 @@
 
 .rental-request-card {
   border: 2px solid var(--amarelo-destaque);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
   text-align: left;
   padding-bottom: 0;
 }

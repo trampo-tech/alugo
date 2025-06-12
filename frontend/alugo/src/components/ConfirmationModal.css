@@ -1,0 +1,46 @@
+/* alugo/frontend/alugo/src/components/ConfirmationModal.css */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.6); /* Fundo escuro semi-transparente */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Garante que o modal esteja acima de tudo */
+}
+
+.modal-content {
+  background-color: var(--branco-puro);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  max-width: 450px; /* Largura máxima do modal */
+  width: 90%; /* Responsivo */
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.modal-message {
+  font-size: 1.15rem;
+  color: var(--preto-texto);
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px; /* Espaço entre os botões */
+  margin-top: 15px;
+}
+
+.modal-actions button {
+  min-width: 100px; /* Largura mínima para os botões */
+  font-size: 1rem;
+  padding: 10px 20px;
+}

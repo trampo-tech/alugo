@@ -1,0 +1,111 @@
+/* alugo/frontend/alugo/src/CartPage.css */
+
+.cart-page-container {
+    /* Reutiliza .itens-page de list.css para layout básico */
+    padding: 40px 20px;
+    max-width: 1000px; /* Um pouco mais estreito que a listagem geral */
+    margin: 30px auto;
+}
+
+.cart-page-container h2 {
+    font-size: 2.2rem;
+    color: var(--preto-texto);
+    margin-bottom: 30px;
+    text-align: center;
+}
+
+.cart-item-card {
+    /* Estilos adicionais para itens no carrinho se necessário */
+    min-height: auto; /* Pode remover min-height fixo de item-card se conteúdo variar muito */
+    height: auto; /* Permite que a altura se ajuste ao conteúdo */
+    text-align: left; /* Alinha o texto à esquerda */
+    padding: 15px; /* Ajuste o padding */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Alinha tudo à esquerda */
+    cursor: default; /* Remove cursor pointer de item-card */
+}
+
+.cart-item-card h3 {
+    text-align: left; /* Alinha o título à esquerda */
+    width: 100%;
+    margin-bottom: 8px;
+    font-size: 1.15rem;
+}
+
+.cart-item-card .item-image {
+    height: 120px; /* Imagem um pouco menor no carrinho */
+    object-fit: contain; /* Para garantir que o item inteiro apareça */
+    margin-bottom: 15px;
+    align-self: center; /* Centraliza a imagem */
+}
+
+.cart-item-card .item-image-placeholder {
+    height: 120px;
+    margin-bottom: 15px;
+    align-self: center;
+}
+
+.cart-item-card p {
+    font-size: 0.95rem;
+    color: var(--cinza-texto-secundario);
+    margin-bottom: 4px;
+}
+
+.cart-item-card p span {
+    font-weight: bold;
+    color: var(--preto-texto);
+}
+
+.cart-item-card .item-preco {
+    font-size: 1rem;
+    margin-bottom: 10px;
+}
+
+.cart-item-card .card-buttons-container {
+    border-top: none; /* Remove a linha divisória do card-buttons-container padrão */
+    padding-top: 0;
+    margin-top: 15px; /* Adiciona margem entre o conteúdo e o botão */
+    justify-content: flex-end; /* Alinha o botão remover à direita */
+    border-top: 1px solid var(--cinza-borda-claro); /* Adiciona uma linha sutil acima dos botões */
+    padding-top: 10px;
+}
+
+.cart-item-card .btn-detalhes {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+}
+
+.cart-summary {
+    background-color: var(--cinza-fundo-claro);
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    text-align: center;
+    margin-top: 40px; /* Espaço do grid de itens */
+    width: 100%;
+}
+
+.cart-summary h3 {
+    font-size: 1.8rem;
+    color: var(--preto-texto);
+    margin-bottom: 25px;
+}
+
+.cart-summary button {
+    margin: 0 10px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .cart-page-container {
+        padding: 20px;
+    }
+    .cart-item-card {
+        padding: 10px;
+    }
+    .cart-summary button {
+        width: 100%;
+        margin: 5px 0;
+    }
+}

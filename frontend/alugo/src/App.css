@@ -28,20 +28,45 @@ header .logo {
     color: var(--azul-principal); /* Usando a nova cor */
 }
 
-header .buttons button {
-    margin-left: 10px;
-    padding: 8px 16px;
-    border: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
-    background-color: var(--branco-puro); /* Usando a nova cor */
-    color: var(--preto-texto); /* Usando a nova cor */
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+/* Ajuste para o grupo do menu de usuário e carrinho */
+.user-menu-group {
+    display: flex;
+    align-items: center;
+    gap: 20px; /* Espaço entre o ícone do carrinho e o menu do usuário/botões de login */
 }
 
-header .buttons button:hover {
-    background-color: var(--cinza-fundo-claro); /* Usando a nova cor */
+/* Estilos para o ícone do carrinho */
+.cart-icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--preto-texto);
+  position: relative; /* Para o contador de itens */
+  transition: color 0.3s ease;
 }
+
+.cart-icon-button:hover {
+  color: var(--azul-principal);
+}
+
+.cart-item-count {
+  position: absolute;
+  top: -8px; /* Ajuste a posição */
+  right: -8px; /* Ajuste a posição */
+  background-color: var(--vermelho-alerta);
+  color: var(--branco-puro);
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
 
 /* User Menu - Estilos para o menu suspenso */
 .user-menu-container {
@@ -173,10 +198,8 @@ header .buttons button:hover {
     gap: 40px;
     justify-content: center; /* Centraliza os itens */
     margin-top: 20px;
-    align-items: stretch; /* **NOVO: Estica os cards para a mesma altura** */
+    align-items: stretch; /* Estica os cards para a mesma altura */
 }
-
-/* Os estilos .card serão definidos em card.css para consistência */
 
 /* Actions */
 .actions {
@@ -224,22 +247,18 @@ header .buttons button:hover {
     background-color: #0056b3; /* Tom mais escuro do azul */
 }
 
-.header-buttons {
-    display: flex;
-    gap: 10px;
+.header-buttons button { /* Ajusta botões de login/cadastro */
+    margin-left: 10px;
+    padding: 8px 16px;
 }
 
 .outline {
-    padding: 8px 16px;
-    border: 1px solid var(--azul-principal); /* Usando a nova cor */
-    background-color: var(--branco-puro); /* Usando a nova cor */
-    color: var(--azul-principal); /* Usando a nova cor */
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    border: 1px solid var(--azul-principal);
+    background-color: var(--branco-puro);
+    color: var(--azul-principal);
 }
 
 .outline:hover {
-    background-color: var(--cinza-fundo-claro); /* Usando a nova cor */
-    color: var(--azul-principal); /* Mantém o texto azul */
+    background-color: var(--cinza-fundo-claro);
+    color: var(--azul-principal);
 }

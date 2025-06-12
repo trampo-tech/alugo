@@ -3,22 +3,24 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
+import { CartContext } from './CartContext'; // Importar CartContext
 import './App.css';
-import './newItem.css'; // Para estilos de botão/feedback message
+import './newItem.css';
 import './ProductDetailsPage.css';
-import './card.css'; // Para estilos do item-image-placeholder
-import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import './card.css';
+import { ArrowLeft } from 'lucide-react';
 
 function ProductDetailsPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { loggedInUser } = useContext(UserContext);
+  const { addToCart } = useContext(CartContext); // Usar addToCart do contexto
 
   const [item, setItem] = useState(null);
   const [owner, setOwner] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [mensagemAluguel, setMensagemAluguel] = useState('');
+  const [mensagem, setMensagem] = useState(''); // Mensagem para adicionar ao carrinho
 
   const [dataInicio, setDataInicio] = useState('');
   const [dataFim, setDataFim] = useState('');
@@ -40,22 +42,22 @@ function ProductDetailsPage() {
     fetchProductDetails();
   }, [id]);
 
-  const handleAlugar = async () => {
-    setMensagemAluguel('');
+  const handleAddToCart = () => { // Função para adicionar ao carrinho
+    setMensagem('');
 
     if (!loggedInUser) {
-      setMensagemAluguel('Você precisa estar logado para alugar um item.');
+      setMensagem('Você precisa estar logado para adicionar itens ao carrinho.');
       setTimeout(() => navigate('/login'), 2000);
       return;
     }
 
     if (item.status !== 'disponivel') {
-      setMensagemAluguel('Este item não está disponível para aluguel no momento.');
+      setMensagem('Este item não está disponível para aluguel no momento.');
       return;
     }
 
     if (!dataInicio || !dataFim) {
-      setMensagemAluguel('Por favor, selecione as datas de início e fim do aluguel.');
+      setMensagem('Por favor, selecione as datas de início e fim do aluguel.');
       return;
     }
 
@@ -65,34 +67,30 @@ function ProductDetailsPage() {
     hoje.setHours(0,0,0,0);
 
     if (inicio < hoje) {
-      setMensagemAluguel('A data de início não pode ser no passado.');
+      setMensagem('A data de início não pode ser no passado.');
       return;
     }
     if (fim <= inicio) {
-      setMensagemAluguel('A data de fim deve ser posterior à data de início.');
+      setMensagem('A data de fim deve ser posterior à data de início.');
       return;
     }
 
-    try {
-      const response = await axios.post('http://localhost:8080/rentals', {
-        item_id: item.id,
-        locatario_id: loggedInUser.id,
-        locador_id: owner.id,
-        data_inicio: dataInicio,
-        data_fim: dataFim,
-      });
+    // Adiciona o item ao carrinho
+    addToCart({
+      item_id: item.id,
+      titulo: item.titulo,
+      preco_diario: item.preco_diario,
+      imagem_id: item.imagem_id,
+      locador_id: owner.id,
+      locador_nome: owner.nome,
+      data_inicio: dataInicio,
+      data_fim: dataFim
+    });
 
-      if (response.data && response.data.sucesso) {
-        setMensagemAluguel(response.data.mensagem);
-        setDataInicio('');
-        setDataFim('');
-      } else {
-        setMensagemAluguel(response.data.erro || 'Erro ao solicitar aluguel. Tente novamente.');
-      }
-    } catch (err) {
-      console.error("Erro na requisição de aluguel:", err.response?.data || err.message);
-      setMensagemAluguel(err.response?.data?.erro || 'Erro ao solicitar aluguel. Verifique as datas ou tente novamente.');
-    }
+    setMensagem('Item adicionado ao carrinho com sucesso!');
+    // Opcional: Limpar as datas ou redirecionar
+    setDataInicio('');
+    setDataFim('');
   };
 
   if (loading) {
@@ -108,11 +106,10 @@ function ProductDetailsPage() {
   }
 
   const isOwner = loggedInUser && loggedInUser.id === owner.id;
-  const canRent = item.status === 'disponivel' && !isOwner;
+  const canAddToCart = item.status === 'disponivel' && !isOwner;
 
   return (
     <div className="product-details-container">
-      {/* Botão de Voltar */}
       <div className="back-button-container">
         <button className="outline" onClick={() => navigate('/')}>
           <ArrowLeft size={20} /> Voltar para o Início
@@ -164,17 +161,17 @@ function ProductDetailsPage() {
 
               <button
                 className="primary"
-                onClick={handleAlugar}
-                disabled={!canRent || !dataInicio || !dataFim}
+                onClick={handleAddToCart} // Chamada para adicionar ao carrinho
+                disabled={!canAddToCart || !dataInicio || !dataFim}
               >
-                {canRent ? 'Alugar Agora' : 'Indisponível para Aluguel'}
+                {canAddToCart ? 'Adicionar ao Carrinho' : 'Indisponível para Carrinho'} {/* Texto do botão */}
               </button>
             </>
           )}
 
-          {mensagemAluguel && (
-            <p className={mensagemAluguel.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>
-              {mensagemAluguel}
+          {mensagem && (
+            <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>
+              {mensagem}
             </p>
           )}
         </div>

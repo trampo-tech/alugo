@@ -496,7 +496,87 @@ app.put('/pedidos/:pedidoId/reject', (req, res) => {
 });
 
 
-// Exibição de itens na landing page (com uma imagem por item)
+// Rota para finalizar o checkout do carrinho (NOVA ROTA)
+app.post('/checkout-cart', async (req, res) => {
+  const { items, locatario_id } = req.body;
+
+  if (!items || !Array.isArray(items) || items.length === 0 || !locatario_id) {
+    return res.status(400).json({ sucesso: false, erro: 'Dados inválidos para checkout do carrinho.' });
+  }
+
+  const createdPedidos = [];
+  const errors = [];
+
+  for (const cartItem of items) {
+    const { item_id, locador_id, data_inicio, data_fim, preco_diario } = cartItem;
+
+    // Validação básica do item do carrinho
+    if (!item_id || !locador_id || !data_inicio || !data_fim || !preco_diario) {
+      errors.push({ item_id, erro: 'Dados incompletos para item no carrinho.' });
+      continue; // Pula para o próximo item
+    }
+
+    // Calcular duração e valor total
+    const inicio = new Date(data_inicio);
+    const fim = new Date(data_fim);
+    const diffTime = Math.abs(fim.getTime() - inicio.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    const valor_total = (parseFloat(preco_diario) * diffDays).toFixed(2);
+
+    // Validação de disponibilidade do item para o período (evitar sobreposição)
+    const checkAvailabilityQuery = `
+      SELECT COUNT(*) AS count
+      FROM pedidos
+      WHERE item_id = ?
+      AND status IN ('pendente', 'em_andamento')
+      AND (
+          (data_inicio <= ? AND data_fim >= ?) OR
+          (data_inicio >= ? AND data_inicio <= ?) OR
+          (data_fim >= ? AND data_fim <= ?)
+      );
+    `;
+    const availabilityParams = [item_id, fim, inicio, inicio, fim, inicio, fim];
+
+    try {
+      const [availabilityResults] = await db.promise().query(checkAvailabilityQuery, availabilityParams);
+      if (availabilityResults[0].count > 0) {
+        errors.push({ item_id, erro: 'Item já alugado ou com pedido pendente para o período selecionado.' });
+        continue; // Pula para o próximo item
+      }
+
+      // Inserir o pedido na tabela 'pedidos'
+      const insertPedidoQuery = `
+        INSERT INTO pedidos (item_id, locador_id, locatario_id, data_inicio, data_fim, valor_total, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `;
+      const pedidoValues = [item_id, locador_id, locatario_id, data_inicio, data_fim, valor_total, 'pendente'];
+      const [insertResult] = await db.promise().query(insertPedidoQuery, pedidoValues);
+      createdPedidos.push({ pedido_id: insertResult.insertId, item_id, valor_total });
+
+    } catch (err) {
+      console.error(`Erro ao processar item ${item_id} no checkout:`, err);
+      errors.push({ item_id, erro: 'Erro interno ao processar pedido.' });
+    }
+  }
+
+  if (createdPedidos.length > 0) {
+    res.status(200).json({
+      sucesso: true,
+      mensagem: 'Checkout processado. Pedidos criados com sucesso!',
+      pedidos_criados: createdPedidos,
+      erros: errors,
+    });
+  } else {
+    res.status(400).json({
+      sucesso: false,
+      erro: 'Nenhum pedido pôde ser criado. Verifique a disponibilidade dos itens.',
+      erros: errors,
+    });
+  }
+});
+
+
+// Exibição de itens na landing page (com uma imagem por item) (mantida)
 app.get('/itens', (req, res) => {
   const sql = `
     SELECT
@@ -519,7 +599,7 @@ app.get('/itens', (req, res) => {
 });
 
 
-// Exibição de itens por categoria
+// Exibição de itens por categoria (mantida)
 app.get('/categoria', (req, res) => {
   const sql = `
     SELECT itens.*, imagens.id AS imagem_id
@@ -540,7 +620,7 @@ app.get('/categoria', (req, res) => {
   });
 });
 
-// Rota para buscar a imagem binária
+// Rota para buscar a imagem binária (mantida)
 app.get('/imagem/:id', (req, res) => {
   const { id } = req.params;
   const sql = 'SELECT imagem, tipo FROM imagens WHERE id = ?';
@@ -562,7 +642,7 @@ app.get('/imagem/:id', (req, res) => {
   });
 });
 
-// Rota para inserir novo item + imagem
+// Rota para inserir novo item + imagem (mantida)
 app.post('/novo-item', upload.single('imagem'), (req, res) => {
   const { titulo, descricao, categoria, preco_diario, condicoes_uso, usuario_id } = req.body;
   const imagem = req.file.buffer;
@@ -600,7 +680,7 @@ app.post('/novo-item', upload.single('imagem'), (req, res) => {
   });
 });
 
-// Rota para buscar itens usando o serviço de busca híbrida (CORRIGIDA para incluir imagem_id e filtros de status)
+// Rota para buscar itens usando o serviço de busca híbrida (mantida)
 app.get('/buscar-itens', async (req, res) => {
   const { query: searchTerm, categoria, precoMin, precoMax, dataInicial, dataFinal, status } = req.query;
   const table_name = 'itens';
@@ -624,7 +704,6 @@ app.get('/buscar-itens', async (req, res) => {
   const dateFilterParams = [];
 
   if (dataInicial && dataFinal) {
-      // Itens que estão disponíveis OU que não têm pedidos sobrepostos no período
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -640,7 +719,6 @@ app.get('/buscar-itens', async (req, res) => {
           )`;
       dateFilterParams.push(dataFinal, dataInicial, dataInicial, dataFinal, dataInicial, dataFinal);
   } else if (dataInicial) {
-      // Itens que estão disponíveis OU que não estão alugados a partir da data inicial
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -652,7 +730,6 @@ app.get('/buscar-itens', async (req, res) => {
           )`;
       dateFilterParams.push(dataInicial);
   } else if (dataFinal) {
-      // Itens que estão disponíveis OU que não estão alugados até a data final
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -666,7 +743,6 @@ app.get('/buscar-itens', async (req, res) => {
   }
 
 
-  // Adicionado filtro de status para a busca híbrida (se o search engine suportar)
   if (status) {
     filters += `status:${status},`;
   }
@@ -690,16 +766,17 @@ app.get('/buscar-itens', async (req, res) => {
 
     const itemIds = hybridSearchResults.map(item => item.id);
 
-    // Buscar os detalhes completos dos itens (incluindo imagem_id) do seu próprio banco de dados
-    // E aplicar o filtro de disponibilidade de datas aqui
     const detailedItemsQuery = `
         SELECT i.*, (SELECT id FROM imagens WHERE imagens.item_id = i.id LIMIT 1) AS imagem_id
         FROM itens i
         WHERE i.id IN (?) ${dateFilterSql}
     `;
     
-    // Concatena os parâmetros para a query SQL (itemIds + dateFilterParams)
-    const queryParams = [itemIds, ...dateFilterParams];
+    const queryParams = [itemIds];
+
+    if (dateFilterParams.length > 0) {
+        queryParams.push(...dateFilterParams);
+    }
 
     db.query(detailedItemsQuery, queryParams, (err, detailedResults) => {
       if (err) {

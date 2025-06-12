@@ -3,10 +3,11 @@ import React, { useState, useEffect, useContext, useCallback } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
+import ConfirmationModal from './components/ConfirmationModal';
 import './list.css';
 import './card.css';
-import './MyProductsPage.css'; // Contém os estilos para o layout da página
-import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import './MyProductsPage.css';
+import { ArrowLeft } from 'lucide-react';
 
 function MyProductsPage() {
   const { loggedInUser } = useContext(UserContext);
@@ -16,6 +17,13 @@ function MyProductsPage() {
   const [mensagem, setMensagem] = useState('');
   const [loadingItems, setLoadingItems] = useState(true);
   const [loadingRentals, setLoadingRentals] = useState(true);
+
+  // Estados para o modal de confirmação
+  const [showModal, setShowModal] = useState(false);
+  const [modalMessage, setModalMessage] = useState('');
+  const [modalAction, setModalAction] = useState(null); // 'approve', 'reject' ou 'delete'
+  const [currentPedidoId, setCurrentPedidoId] = useState(null);
+  const [currentItemId, setCurrentItemId] = useState(null);
 
   const fetchData = useCallback(async () => {
     if (!loggedInUser) {
@@ -68,26 +76,52 @@ function MyProductsPage() {
     navigate(`/item/${itemId}`);
   };
 
-  const handleDeleteItem = async (itemId) => {
-    if (window.confirm('Tem certeza que deseja deletar este item? Esta ação é irreversível.')) {
+  // handleDeleteItem agora apenas configura o modal
+  const handleDeleteItem = (itemId) => {
+    setModalMessage('Tem certeza que deseja deletar este item? Esta ação é irreversível.');
+    setModalAction('delete');
+    setCurrentItemId(itemId);
+    setShowModal(true);
+  };
+
+  // handleApproveRental e handleRejectRental permanecem como estão (chamam o modal)
+  const handleApproveRental = (pedidoId, item_id) => {
+    setModalMessage('Você confirma a aprovação deste aluguel? Esta ação tornará o item alugado para o período selecionado.');
+    setModalAction('approve');
+    setCurrentPedidoId(pedidoId);
+    setCurrentItemId(item_id);
+    setShowModal(true);
+  };
+
+  const handleRejectRental = (pedidoId, item_id) => {
+    setModalMessage('Você confirma a rejeição deste aluguel? Esta ação manterá o item disponível.');
+    setModalAction('reject');
+    setCurrentPedidoId(pedidoId);
+    setCurrentItemId(item_id);
+    setShowModal(true);
+  };
+
+  // Função única para confirmar qualquer ação do modal
+  const confirmAction = async () => {
+    setShowModal(false); // Esconde o modal
+
+    if (modalAction === 'delete' && currentItemId) {
       try {
-        await axios.delete(`http://localhost:8080/itens/${itemId}`);
+        await axios.delete(`http://localhost:8080/itens/${currentItemId}`);
         setMensagem('Item deletado com sucesso!');
         fetchData(); // Recarrega todas as listas
       } catch (error) {
         console.error('Erro ao deletar item:', error);
         setMensagem('Erro ao deletar item. Tente novamente.');
+      } finally {
+        setCurrentItemId(null); // Limpa o ID atual
       }
-    }
-  };
-
-  const handleApproveRental = async (pedidoId, item_id) => {
-    if (window.confirm('Tem certeza que deseja aprovar este aluguel?')) {
+    } else if (modalAction === 'approve' && currentPedidoId && currentItemId) {
       try {
-        const response = await axios.put(`http://localhost:8080/pedidos/${pedidoId}/approve`, { item_id });
+        const response = await axios.put(`http://localhost:8080/pedidos/${currentPedidoId}/approve`, { item_id: currentItemId });
         if (response.data.sucesso) {
-          setMensagem(`Aluguel ${pedidoId} aprovado com sucesso!`);
-          fetchData(); // Recarrega todas as listas após a aprovação
+          setMensagem(`Aluguel ${currentPedidoId} aprovado com sucesso!`);
+          fetchData();
         } else {
           setMensagem(response.data.erro || 'Erro ao aprovar aluguel.');
         }
@@ -95,16 +129,12 @@ function MyProductsPage() {
         console.error('Erro ao aprovar aluguel:', error.response?.data || error.message);
         setMensagem('Erro ao aprovar aluguel. Tente novamente.');
       }
-    }
-  };
-
-  const handleRejectRental = async (pedidoId, item_id) => {
-    if (window.confirm('Tem certeza que deseja rejeitar este aluguel?')) {
+    } else if (modalAction === 'reject' && currentPedidoId && currentItemId) {
       try {
-        const response = await axios.put(`http://localhost:8080/pedidos/${pedidoId}/reject`, { item_id });
+        const response = await axios.put(`http://localhost:8080/pedidos/${currentPedidoId}/reject`, { item_id: currentItemId });
         if (response.data.sucesso) {
-          setMensagem(`Aluguel ${pedidoId} rejeitado com sucesso!`);
-          fetchData(); // Recarrega todas as listas após a rejeição
+          setMensagem(`Aluguel ${currentPedidoId} rejeitado com sucesso!`);
+          fetchData();
         } else {
           setMensagem(response.data.erro || 'Erro ao rejeitar aluguel.');
         }
@@ -113,7 +143,22 @@ function MyProductsPage() {
         setMensagem('Erro ao rejeitar aluguel. Tente novamente.');
       }
     }
+
+    // Limpa os estados do modal após a ação
+    setCurrentPedidoId(null);
+    setCurrentItemId(null);
+    setModalAction(null);
   };
+
+  const cancelAction = () => {
+    setShowModal(false);
+    // Limpa os estados do modal mesmo se cancelar
+    setCurrentPedidoId(null);
+    setCurrentItemId(null);
+    setModalAction(null);
+    setMensagem('Ação cancelada.');
+  };
+
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -122,15 +167,13 @@ function MyProductsPage() {
 
   return (
     <div className="itens-page my-products-page-container">
-      {/* Botão de Voltar - Agora dentro do main-layout-content ou fora, no topo */}
       <div className="back-button-container">
         <button className="outline" onClick={() => navigate('/')}>
           <ArrowLeft size={20} /> Voltar para o Início
         </button>
       </div>
 
-      {/* Novo contêiner para a sidebar e o main-content */}
-      <div className="main-layout-content">
+      <div className="my-products-main-content-wrapper">
         <div className="sidebar-filters" style={{ width: 'unset', maxWidth: '280px' }}>
           <h2>Meus Produtos</h2>
           <button className="primary" onClick={handleAddNewProduct}>Adicionar Novo Produto</button>
@@ -211,6 +254,16 @@ function MyProductsPage() {
           </section>
         </div>
       </div>
+
+      {showModal && (
+        <ConfirmationModal 
+          message={modalMessage}
+          onConfirm={confirmAction}
+          onCancel={cancelAction}
+          confirmText={modalAction === 'delete' ? 'Sim, Deletar' : (modalAction === 'approve' ? 'Sim, Aprovar' : 'Sim, Rejeitar')}
+          cancelText="Não, Cancelar"
+        />
+      )}
     </div>
   );
 }
