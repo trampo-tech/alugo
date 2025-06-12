@@ -7,6 +7,7 @@ import './App.css';
 import './newItem.css'; // Para estilos de botão/feedback message
 import './ProductDetailsPage.css';
 import './card.css'; // Para estilos do item-image-placeholder
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -48,8 +49,6 @@ function ProductDetailsPage() {
       return;
     }
 
-    // Aqui, o status do item é verificado, mas ele permanecerá 'disponivel' no DB após a solicitação.
-    // Apenas o pedido é pendente.
     if (item.status !== 'disponivel') {
       setMensagemAluguel('Este item não está disponível para aluguel no momento.');
       return;
@@ -84,10 +83,7 @@ function ProductDetailsPage() {
       });
 
       if (response.data && response.data.sucesso) {
-        setMensagemAluguel(response.data.mensagem); // Mensagem do backend
-        // Após solicitação, o status do ITEM AINDA É DISPONIVEL (para o locatário ver, o pedido está pendente)
-        // Não alteramos o status do item no frontend aqui para não confundir o locatário
-        // setItem(prevItem => ({ ...prevItem, status: response.data.novo_status_item || 'disponivel' }));
+        setMensagemAluguel(response.data.mensagem);
         setDataInicio('');
         setDataFim('');
       } else {
@@ -116,6 +112,13 @@ function ProductDetailsPage() {
 
   return (
     <div className="product-details-container">
+      {/* Botão de Voltar */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/')}>
+          <ArrowLeft size={20} /> Voltar para o Início
+        </button>
+      </div>
+
       <div className="product-details-card">
         {item.imagem_id ? (
           <img
@@ -132,9 +135,7 @@ function ProductDetailsPage() {
           <p className="product-category">Categoria: {item.categoria}</p>
           <p className="product-description">{item.descricao}</p>
           <p className="product-price">Preço Diário: <span>R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}</span></p>
-          {/* O status do item aqui reflete o que o locador definiu para o item (disponivel, alugado, etc.) */}
-          {/* Para o locatário, um pedido pendente será visível na página 'Meus Aluguéis' */}
-          <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado' ? 'Alugado' : 'Status Desconhecido')}</p>
+          <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado' ? 'Alugado' : 'Indisponível')}</p>
           {item.condicoes_uso && <p className="product-conditions">Condições de Uso: {item.condicoes_uso}</p>}
 
           {isOwner ? (

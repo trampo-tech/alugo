@@ -4,25 +4,22 @@ import axios from 'axios';
 import './App.css';
 import './newItem.css';
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function RegisterPage() {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [telefone, setTelefone] = useState('');
-  const [cpf, setCpf] = useState(''); // Estado do CPF
+  const [cpf, setCpf] = useState('');
   const [dataNascimento, setDataNascimento] = useState('');
   const [genero, setGenero] = useState('');
   const [tipoUsuario, setTipoUsuario] = useState('ambos');
   const [mensagem, setMensagem] = useState('');
   const navigate = useNavigate();
 
-  // Função para formatar o CPF
   const formatCpf = (value) => {
-    // Remove tudo que não for dígito
     let cleanedValue = value.replace(/\D/g, '');
-
-    // Aplica a máscara se houver dígitos suficientes
     if (cleanedValue.length > 3 && cleanedValue.length <= 6) {
       cleanedValue = cleanedValue.replace(/(\d{3})(\d+)/, '$1.$2');
     } else if (cleanedValue.length > 6 && cleanedValue.length <= 9) {
@@ -47,11 +44,7 @@ function RegisterPage() {
       return;
     }
 
-    // CPF que será enviado para o backend
-    // É bom garantir que o CPF seja enviado no formato esperado pelo backend
-    // ou que o backend limpe/formate por conta própria.
-    // Aqui estamos confiando na formatação do backend.
-    const cpfParaEnviar = cpf.replace(/\D/g, ''); // Envia apenas dígitos, o backend fará a formatação final
+    const cpfParaEnviar = cpf.replace(/\D/g, '');
 
     try {
       const res = await axios.post('http://localhost:8080/register', {
@@ -59,7 +52,7 @@ function RegisterPage() {
         email,
         senha,
         telefone: telefone || null,
-        cpf: cpfParaEnviar || null, // Envia o CPF sem formatação, o backend formata para salvar
+        cpf: cpfParaEnviar || null,
         data_nascimento: dataNascimento || null,
         genero: genero || null,
         tipo_usuario: tipoUsuario,
@@ -85,6 +78,12 @@ function RegisterPage() {
 
   return (
     <div className="novoitem-container">
+      {/* Botão de Voltar */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/')}>
+          <ArrowLeft size={20} /> Voltar para o Início
+        </button>
+      </div>
       <h2>Cadastro de Usuário</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="nome">Nome:</label>
@@ -104,8 +103,8 @@ function RegisterPage() {
           type="text"
           id="cpf"
           value={cpf}
-          onChange={handleCpfChange} // Chama a função de formatação no onChange
-          maxLength="14" // Limita para o formato XXX.XXX.XXX-XX
+          onChange={handleCpfChange}
+          maxLength="14"
           placeholder="000.000.000-00"
         />
 

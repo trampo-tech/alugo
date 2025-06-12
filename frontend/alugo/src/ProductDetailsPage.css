@@ -11,7 +11,25 @@
   background-color: var(--cinza-fundo-claro);
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  position: relative; /* Para posicionar o botão de voltar absolute se necessário */
 }
+
+/* Estilos para o contêiner do botão de voltar */
+.back-button-container {
+  width: 100%;
+  text-align: left; /* Alinha o botão à esquerda */
+  margin-bottom: 20px; /* Espaço entre o botão e o conteúdo do card */
+  /* Se quiser que ele seja fixo ou em outra posição, ajuste aqui */
+}
+
+.back-button-container button.outline {
+  display: inline-flex; /* Para alinhar o ícone e o texto */
+  align-items: center;
+  gap: 8px; /* Espaço entre o ícone e o texto */
+  padding: 8px 15px; /* Ajuste o padding do botão */
+  font-size: 0.95rem;
+}
+
 
 .product-details-card {
   background-color: var(--branco-puro);
@@ -32,6 +50,7 @@
   margin-bottom: 20px;
 }
 
+/* O .item-image-placeholder de card.css já será aplicado aqui */
 .product-details-image-placeholder {
   min-height: 250px;
   font-size: 1.5rem;
@@ -89,10 +108,10 @@
 }
 
 .product-status.status-alugado,
-.product-status.status-alugado_pendente, /* Adicionado para status pendente */
-.product-status.status-em_andamento,    /* Adicionado para status em andamento */
-.product-status.status-concluido,       /* Se houver mais status */
-.product-status.status-cancelado,       /* Se houver mais status */
+.product-status.status-alugado_pendente,
+.product-status.status-em_andamento,
+.product-status.status-concluido,
+.product-status.status-cancelado,
 .product-status.status-inativo {
   background-color: var(--cor-erro-fundo);
   color: var(--cor-erro-texto);
@@ -110,7 +129,7 @@
 .rental-dates-selection label {
   font-weight: bold;
   color: var(--preto-texto);
-  margin-bottom: -10px; /* Ajusta o espaço entre o label e o input */
+  margin-bottom: -10px;
 }
 
 .rental-dates-selection input[type="date"] {
@@ -206,13 +225,13 @@
   }
 
   .rental-dates-selection {
-    flex-direction: row; /* Coloca os inputs de data lado a lado */
+    flex-direction: row;
     justify-content: space-between;
   }
   .rental-dates-selection label {
-    width: auto; /* Permite que o label ocupe apenas o espaço necessário */
+    width: auto;
   }
   .rental-dates-selection input[type="date"] {
-    width: calc(50% - 10px); /* Ajusta a largura para caberem lado a lado */
+    width: calc(50% - 10px);
   }
 }

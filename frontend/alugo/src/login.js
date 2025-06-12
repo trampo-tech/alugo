@@ -4,7 +4,8 @@ import axios from 'axios';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
-import './newItem.css';
+import './newItem.css'; // Para estilos de formulário e mensagens
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -40,6 +41,12 @@ function LoginPage() {
 
   return (
     <div className="novoitem-container">
+      {/* Botão de Voltar */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/')}>
+          <ArrowLeft size={20} /> Voltar para o Início
+        </button>
+      </div>
       <h2>Login</h2>
       <form onSubmit={handleLogin}>
         <label htmlFor="email">Email:</label>

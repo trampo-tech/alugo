@@ -3,7 +3,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
-import './newItem.css'; // Reusing form styling
+import './newItem.css'; // Reutilizando o estilo do formulário
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function ProfilePage() {
   const { loggedInUser, login } = useContext(UserContext);
@@ -11,18 +12,17 @@ function ProfilePage() {
 
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha, setSenha] = useState(''); // Only for changing password
+  const [senha, setSenha] = useState(''); // Apenas para alterar a senha
   const [telefone, setTelefone] = useState('');
   const [endereco, setEndereco] = useState('');
   const [mensagem, setMensagem] = useState('');
 
   useEffect(() => {
     if (!loggedInUser) {
-      navigate('/login'); // Redirect to login if not logged in
+      navigate('/login');
       return;
     }
 
-    // Fetch user data from backend
     axios.get(`http://localhost:8080/profile/${loggedInUser.id}`)
       .then(response => {
         const userData = response.data;
@@ -43,7 +43,7 @@ function ProfilePage() {
 
     try {
       const updateData = { nome, email, telefone, endereco };
-      if (senha) { // Only send password if it's being changed
+      if (senha) {
         updateData.senha = senha;
       }
 
@@ -51,9 +51,7 @@ function ProfilePage() {
 
       if (response.data && response.data.sucesso) {
         setMensagem('Perfil atualizado com sucesso!');
-        // Update user context with new data (if necessary, though not changing ID/email usually)
-        login({ ...loggedInUser, nome, email, telefone, endereco }); // Update local storage
-        // Optionally clear password field after update
+        login({ ...loggedInUser, nome, email, telefone, endereco });
         setSenha('');
       } else {
         setMensagem(response.data.erro || 'Erro ao atualizar perfil.');
@@ -66,26 +64,32 @@ function ProfilePage() {
 
   return (
     <div className="novoitem-container">
+      {/* Botão de Voltar */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/')}>
+          <ArrowLeft size={20} /> Voltar para o Início
+        </button>
+      </div>
       <h2>Gerenciar Perfil</h2>
       <form onSubmit={handleSubmit}>
-        <label>Nome:</label>
-        <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} required />
+        <label htmlFor="nome">Nome:</label>
+        <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
 
-        <label>Email:</label>
-        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <label htmlFor="email">Email:</label>
+        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
-        <label>Nova Senha (deixe em branco para não alterar):</label>
-        <input type="password" value={senha} onChange={(e) => setSenha(e.target.value)} />
+        <label htmlFor="senha">Nova Senha (deixe em branco para não alterar):</label>
+        <input type="password" id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
 
-        <label>Telefone:</label>
-        <input type="text" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+        <label htmlFor="telefone">Telefone:</label>
+        <input type="text" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
 
-        <label>Endereço:</label>
-        <textarea value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+        <label htmlFor="endereco">Endereço:</label>
+        <textarea id="endereco" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
 
-        <button type="submit">Salvar Alterações</button>
+        <button type="submit" className="primary">Salvar Alterações</button>
       </form>
-      {mensagem && <p>{mensagem}</p>}
+      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
     </div>
   );
 }

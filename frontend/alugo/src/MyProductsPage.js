@@ -5,7 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './list.css';
 import './card.css';
-import './MyProductsPage.css';
+import './MyProductsPage.css'; // Contém os estilos para o layout da página
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function MyProductsPage() {
   const { loggedInUser } = useContext(UserContext);
@@ -41,7 +42,6 @@ function MyProductsPage() {
 
     try {
       const rentalsResponse = await axios.get(`http://localhost:8080/my-product-rentals/${loggedInUser.id}`);
-      // Filtrar para mostrar apenas 'pendente' e 'em_andamento'
       const filteredRentals = rentalsResponse.data.filter(rental =>
         rental.pedido_status === 'pendente' || rental.pedido_status === 'em_andamento'
       );
@@ -122,85 +122,94 @@ function MyProductsPage() {
 
   return (
     <div className="itens-page my-products-page-container">
-      <div className="sidebar-filters" style={{ width: 'unset', maxWidth: '280px' }}>
-        <h2>Meus Produtos</h2>
-        <button className="primary" onClick={handleAddNewProduct}>Adicionar Novo Produto</button>
-        {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+      {/* Botão de Voltar - Agora dentro do main-layout-content ou fora, no topo */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/')}>
+          <ArrowLeft size={20} /> Voltar para o Início
+        </button>
       </div>
 
-      <div className="main-content">
-        <section className="my-items-section">
-          <h3>Itens Cadastrados por Mim</h3>
-          {loadingItems ? (
-            <p>Carregando seus itens...</p>
-          ) : myItems.length === 0 ? (
-            <p>Você não tem nenhum item cadastrado. Clique em "Adicionar Novo Produto" para começar!</p>
-          ) : (
-            <div className="listagem-itens">
-              {myItems.map((item) => (
-                <div key={item.id} className="item-card">
-                  {item.imagem_id ? (
-                    <img
-                      src={`http://localhost:8080/imagem/${item.imagem_id}`}
-                      alt={item.titulo}
-                      className="item-image"
-                    />
-                  ) : (
-                    <div className="item-image-placeholder">N/A</div>
-                  )}
-                  <h3>{item.titulo}</h3>
-                  <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
-                  <p className={`product-status status-${item.status}`}>{item.status}</p>
-                  <div className="card-buttons-container">
-                    <button className="btn-detalhes" onClick={() => handleItemClick(item.id)}>Ver Detalhes</button>
-                    <button className="btn-detalhes danger" onClick={() => handleDeleteItem(item.id)}>Deletar</button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+      {/* Novo contêiner para a sidebar e o main-content */}
+      <div className="main-layout-content">
+        <div className="sidebar-filters" style={{ width: 'unset', maxWidth: '280px' }}>
+          <h2>Meus Produtos</h2>
+          <button className="primary" onClick={handleAddNewProduct}>Adicionar Novo Produto</button>
+          {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+        </div>
 
-        <section className="incoming-rentals-section">
-          <h3>Pedidos de Aluguel Recebidos</h3>
-          {loadingRentals ? (
-            <p>Carregando pedidos...</p>
-          ) : incomingRentals.length === 0 ? (
-            <p>Nenhum pedido de aluguel recebido para seus itens com status pendente ou em andamento.</p>
-          ) : (
-            <div className="listagem-itens">
-              {incomingRentals.map((rental) => (
-                <div key={rental.pedido_id} className="item-card rental-request-card">
-                  {rental.item_imagem_id ? (
-                    <img
-                      src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
-                      alt={rental.item_titulo}
-                      className="item-image"
-                    />
-                  ) : (
-                    <div className="item-image-placeholder">N/A</div>
-                  )}
-                  <h3>{rental.item_titulo}</h3>
-                  <p>De: <strong>{rental.locatario_nome}</strong></p>
-                  <p>Período: {formatDate(rental.data_inicio)} a {formatDate(rental.data_fim)}</p>
-                  <p>Valor: R$ {parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</p>
-                  <p className={`rental-status status-${rental.pedido_status}`}>Status: {rental.pedido_status}</p>
-
-                  {rental.pedido_status === 'pendente' && (
+        <div className="main-content">
+          <section className="my-items-section">
+            <h3>Itens Cadastrados por Mim</h3>
+            {loadingItems ? (
+              <p>Carregando seus itens...</p>
+            ) : myItems.length === 0 ? (
+              <p>Você não tem nenhum item cadastrado. Clique em "Adicionar Novo Produto" para começar!</p>
+            ) : (
+              <div className="listagem-itens">
+                {myItems.map((item) => (
+                  <div key={item.id} className="item-card">
+                    {item.imagem_id ? (
+                      <img
+                        src={`http://localhost:8080/imagem/${item.imagem_id}`}
+                        alt={item.titulo}
+                        className="item-image"
+                      />
+                    ) : (
+                      <div className="item-image-placeholder">N/A</div>
+                    )}
+                    <h3>{item.titulo}</h3>
+                    <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
+                    <p className={`product-status status-${item.status}`}>{item.status}</p>
                     <div className="card-buttons-container">
-                      <button className="btn-detalhes primary" onClick={() => handleApproveRental(rental.pedido_id, rental.item_id)}>Aprovar</button>
-                      <button className="btn-detalhes danger" onClick={() => handleRejectRental(rental.pedido_id, rental.item_id)}>Rejeitar</button>
+                      <button className="btn-detalhes" onClick={() => handleItemClick(item.id)}>Ver Detalhes</button>
+                      <button className="btn-detalhes danger" onClick={() => handleDeleteItem(item.id)}>Deletar</button>
                     </div>
-                  )}
-                  {/* Se o pedido não for pendente, mas estiver em andamento, não mostra os botões de ação */}
-                  {rental.pedido_status === 'em_andamento' && (
-                    <p className="feedback-message success" style={{width: '100%', marginTop: 'auto', marginBottom: '10px'}}>Este pedido foi aprovado.</p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+
+          <section className="incoming-rentals-section">
+            <h3>Pedidos de Aluguel Recebidos</h3>
+            {loadingRentals ? (
+              <p>Carregando pedidos...</p>
+            ) : incomingRentals.length === 0 ? (
+              <p>Nenhum pedido de aluguel recebido para seus itens com status pendente ou em andamento.</p>
+            ) : (
+              <div className="listagem-itens">
+                {incomingRentals.map((rental) => (
+                  <div key={rental.pedido_id} className="item-card rental-request-card">
+                    {rental.item_imagem_id ? (
+                      <img
+                        src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
+                        alt={rental.item_titulo}
+                        className="item-image"
+                      />
+                    ) : (
+                      <div className="item-image-placeholder">N/A</div>
+                    )}
+                    <h3>{rental.item_titulo}</h3>
+                    <p>De: <strong>{rental.locatario_nome}</strong></p>
+                    <p>Período: {formatDate(rental.data_inicio)} a {formatDate(rental.data_fim)}</p>
+                    <p>Valor: R$ {parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</p>
+                    <p className={`rental-status status-${rental.pedido_status}`}>Status: {rental.pedido_status}</p>
+
+                    {rental.pedido_status === 'pendente' && (
+                      <div className="card-buttons-container">
+                        <button className="btn-detalhes primary" onClick={() => handleApproveRental(rental.pedido_id, rental.item_id)}>Aprovar</button>
+                        <button className="btn-detalhes danger" onClick={() => handleRejectRental(rental.pedido_id, rental.item_id)}>Rejeitar</button>
+                      </div>
+                    )}
+                    {rental.pedido_status === 'em_andamento' && (
+                      <p className="feedback-message success" style={{width: '100%', marginTop: 'auto', marginBottom: '10px'}}>Este pedido foi aprovado.</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        </div>
       </div>
     </div>
   );

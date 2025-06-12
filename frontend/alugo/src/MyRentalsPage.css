@@ -2,7 +2,24 @@
 
 .my-rentals-page {
   padding: 40px 20px;
+  position: relative; /* Para posicionar o botão de voltar absolute se necessário */
 }
+
+/* Estilos para o contêiner do botão de voltar */
+.back-button-container {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.back-button-container button.outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  font-size: 0.95rem;
+}
+
 
 .rental-card {
   cursor: pointer;
@@ -49,10 +66,10 @@
   color: #856404;
 }
 
-.rental-status.status-ativo, /* Manter para 'ativo' se o ENUM tiver, embora 'em_andamento' seja o principal */
-.rental-status.status-em_andamento { /* **NOVO: Cor mais amigável para em_andamento** */
-  background-color: var(--verde-acao); /* Usando o verde de ação */
-  color: var(--branco-puro); /* Texto branco para bom contraste */
+.rental-status.status-ativo,
+.rental-status.status-em_andamento {
+  background-color: var(--verde-acao);
+  color: var(--branco-puro);
 }
 
 .rental-status.status-concluido {
@@ -61,7 +78,7 @@
 }
 
 .rental-status.status-cancelado {
-  background-color: var(--vermelho-alerta); /* Cancelado em vermelho */
+  background-color: var(--vermelho-alerta);
   color: var(--branco-puro);
 }
 

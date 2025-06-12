@@ -5,9 +5,10 @@ import { useNavigate } from 'react-router-dom';
 import './newItem.css'; // Estilos específicos do formulário
 import './App.css'; // Estilos gerais, se necessário
 import { UserContext } from './UserContext'; // Para obter o usuario_id
+import { ArrowLeft } from 'lucide-react'; // Importar ícone
 
 function NovoItem() {
-  const { loggedInUser } = useContext(UserContext); // Obtém usuário logado
+  const { loggedInUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const [titulo, setTitulo] = useState('');
@@ -18,7 +19,6 @@ function NovoItem() {
   const [imagem, setImagem] = useState(null);
   const [mensagem, setMensagem] = useState('');
 
-  // Redirecionar se não estiver logado
   useEffect(() => {
     if (!loggedInUser) {
       navigate('/login');
@@ -27,7 +27,7 @@ function NovoItem() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMensagem(''); // Limpa mensagens anteriores
+    setMensagem('');
 
     if (!loggedInUser) {
       setMensagem('Você precisa estar logado para adicionar um item.');
@@ -46,7 +46,7 @@ function NovoItem() {
     formData.append('preco_diario', precoDiario);
     formData.append('condicoes_uso', condicoesUso);
     formData.append('imagem', imagem);
-    formData.append('usuario_id', loggedInUser.id); // Envia o ID do usuário logado
+    formData.append('usuario_id', loggedInUser.id);
 
     try {
       const res = await axios.post('http://localhost:8080/novo-item', formData, {
@@ -57,14 +57,12 @@ function NovoItem() {
 
       if (res.data && res.data.message) {
         setMensagem('Item cadastrado com sucesso!');
-        // Limpar formulário após o sucesso
         setTitulo('');
         setDescricao('');
         setCategoria('');
         setPrecoDiario('');
         setCondicoesUso('');
         setImagem(null);
-        // Opcional: redirecionar para a página "Meus Produtos"
         setTimeout(() => navigate('/my-products'), 1500);
       } else {
         setMensagem('Erro ao cadastrar item. Tente novamente.');
@@ -81,6 +79,12 @@ function NovoItem() {
 
   return (
     <div className="novoitem-container">
+      {/* Botão de Voltar */}
+      <div className="back-button-container">
+        <button className="outline" onClick={() => navigate('/my-products')}>
+          <ArrowLeft size={20} /> Voltar para Meus Produtos
+        </button>
+      </div>
       <h2>Adicionar Novo Item</h2>
       <form onSubmit={handleSubmit}>
         <label htmlFor="titulo">Título:</label>

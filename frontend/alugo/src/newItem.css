@@ -8,7 +8,24 @@
   max-width: 600px;
   margin: 50px auto;
   text-align: center;
+  position: relative; /* Para posicionar o botão de voltar absolute se necessário */
 }
+
+/* Estilos para o contêiner do botão de voltar */
+.back-button-container {
+  width: 100%;
+  text-align: left;
+  margin-bottom: 20px;
+}
+
+.back-button-container button.outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 15px;
+  font-size: 0.95rem;
+}
+
 
 .novoitem-container h2 {
   font-size: 2.2rem;
@@ -38,7 +55,6 @@
   color: var(--preto-texto);
 }
 
-/* Estilo para links em formulários, como "Já tem conta?" */
 .novoitem-container .form-link {
   margin-top: 15px;
   font-size: 0.95rem;
