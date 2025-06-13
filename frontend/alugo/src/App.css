@@ -130,15 +130,32 @@ header .logo {
 }
 
 
-/* Hero */
 .hero {
-    background-color: var(--azul-principal); /* Usando a nova cor */
+    /* 6 tons de azul em diagonais, cada vez menores */
+    background: linear-gradient(
+        120deg,
+        #e3ecfa 0%,
+        #e3ecfa 33.3%,
+        #c6dbf7 33.3%,
+        #c6dbf7 55%,
+        #a9c9f4 55%,
+        #a9c9f4 70%,
+        #8cb8f1 70%,
+        #8cb8f1 82%,
+        #6fa8dc 82%,
+        #6fa8dc 91%,
+        #4a90e2 91%,
+        #4a90e2 100%
+    );
     padding: 120px;
     text-align: center;
-    color: var(--branco-puro); /* Texto em branco */
+    color: var(--branco-puro);
+    position: relative;
+    overflow: hidden;
 }
 
 .hero h1 {
+    color: rgb(255, 255, 255);
     font-size: 2.5rem;
     margin-bottom: 20px;
 }
@@ -151,6 +168,7 @@ header .logo {
     border-radius: 12px;
     overflow: hidden;
     border: 1px solid var(--cinza-borda-claro); /* Usando a nova cor */
+    height: 55px;
 }
 
 .search-bar input {
@@ -159,16 +177,21 @@ header .logo {
     border: none;
     outline: none;
     font-size: 1rem;
-    color: var(--preto-texto); /* Usando a nova cor */
+    height: 55px;
+    color: var(--preto-texto);
 }
 
 .search-bar button {
-    background-color: var(--azul-principal); /* Usando a nova cor */
-    color: var(--branco-puro); /* Usando a nova cor */
+    background-color: #4a90e2;      /* Azul mais suave */
+    color: var(--branco-puro);
     border: none;
-    padding: 12px 24px;
+    padding: 0 18px;                /* Padding horizontal apenas */
+    font-size: 0.95rem;
     cursor: pointer;
     transition: background-color 0.2s;
+    height: 55px;                   /* Igual à altura do input (12px padding + font-size ~24px) */
+    display: flex;
+    align-items: center;
 }
 
 .search-bar button:hover {

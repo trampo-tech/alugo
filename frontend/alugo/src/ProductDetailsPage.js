@@ -9,6 +9,7 @@ import './newItem.css';
 import './ProductDetailsPage.css';
 import './card.css';
 import { ArrowLeft } from 'lucide-react';
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -109,82 +110,97 @@ function ProductDetailsPage() {
   const canAddToCart = item.status === 'disponivel' && !isOwner;
 
   return (
-    <div className="product-details-container">
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
-      </div>
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="product-details-container">
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate(-1)}>
+            <ArrowLeft size={20} /> Voltar
+          </button>
+        </div>
 
-      <div className="product-details-card">
-        {item.imagem_id ? (
-          <img
-            src={`http://localhost:8080/imagem/${item.imagem_id}`}
-            alt={item.titulo}
-            className="product-details-image"
-          />
-        ) : (
-          <div className="item-image-placeholder product-details-image-placeholder">Imagem Indisponível</div>
-        )}
-
-        <div className="product-info">
-          <h1>{item.titulo}</h1>
-          <p className="product-category">Categoria: {item.categoria}</p>
-          <p className="product-description">{item.descricao}</p>
-          <p className="product-price">Preço Diário: <span>R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}</span></p>
-          <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado' ? 'Alugado' : 'Indisponível')}</p>
-          {item.condicoes_uso && <p className="product-conditions">Condições de Uso: {item.condicoes_uso}</p>}
-
-          {isOwner ? (
-            <p className="feedback-message error">Você é o proprietário deste item.</p>
+        <div className="product-details-card">
+          {item.imagem_id ? (
+            <img
+              src={`http://localhost:8080/imagem/${item.imagem_id}`}
+              alt={item.titulo}
+              className="product-details-image"
+            />
           ) : (
-            <>
-              <div className="rental-dates-selection">
-                <label htmlFor="dataInicio">Data de Início:</label>
-                <input
-                  type="date"
-                  id="dataInicio"
-                  value={dataInicio}
-                  onChange={(e) => setDataInicio(e.target.value)}
-                  min={new Date().toISOString().split('T')[0]}
-                />
-
-                <label htmlFor="dataFim">Data de Fim:</label>
-                <input
-                  type="date"
-                  id="dataFim"
-                  value={dataFim}
-                  onChange={(e) => setDataFim(e.target.value)}
-                  min={dataInicio || new Date().toISOString().split('T')[0]}
-                />
-              </div>
-
-              <button
-                className="primary"
-                onClick={handleAddToCart} // Chamada para adicionar ao carrinho
-                disabled={!canAddToCart || !dataInicio || !dataFim}
-              >
-                {canAddToCart ? 'Adicionar ao Carrinho' : 'Indisponível para Carrinho'} {/* Texto do botão */}
-              </button>
-            </>
+            <div className="item-image-placeholder product-details-image-placeholder">Imagem Indisponível</div>
           )}
 
-          {mensagem && (
-            <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>
-              {mensagem}
-            </p>
-          )}
+          <div className="product-info">
+            <h1>{item.titulo}</h1>
+            <p className="product-category">Categoria: {item.categoria}</p>
+            <p className="product-description">{item.descricao}</p>
+            <p className="product-price">Preço Diário: <span>R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}</span></p>
+            <p className={`product-status status-${item.status}`}>Disponibilidade: {item.status === 'disponivel' ? 'Disponível' : (item.status === 'alugado' ? 'Alugado' : 'Indisponível')}</p>
+            {item.condicoes_uso && <p className="product-conditions">Condições de Uso: {item.condicoes_uso}</p>}
+
+            {isOwner ? (
+              <p className="feedback-message error">Você é o proprietário deste item.</p>
+            ) : (
+              <>
+                <div className="rental-dates-selection">
+                  <label htmlFor="dataInicio">Data de Início:</label>
+                  <input
+                    type="date"
+                    id="dataInicio"
+                    value={dataInicio}
+                    onChange={(e) => setDataInicio(e.target.value)}
+                    min={new Date().toISOString().split('T')[0]}
+                  />
+
+                  <label htmlFor="dataFim">Data de Fim:</label>
+                  <input
+                    type="date"
+                    id="dataFim"
+                    value={dataFim}
+                    onChange={(e) => setDataFim(e.target.value)}
+                    min={dataInicio || new Date().toISOString().split('T')[0]}
+                  />
+                </div>
+
+                <button
+                  className="primary"
+                  onClick={handleAddToCart} // Chamada para adicionar ao carrinho
+                  disabled={!canAddToCart || !dataInicio || !dataFim}
+                >
+                  {canAddToCart ? 'Adicionar ao Carrinho' : 'Indisponível para Carrinho'} {/* Texto do botão */}
+                </button>
+              </>
+            )}
+
+            {mensagem && (
+              <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>
+                {mensagem}
+              </p>
+            )}
+          </div>
         </div>
+
+        {owner && (
+          <div className="owner-info-card">
+            <h2>Informações do Proprietário</h2>
+            <p>Nome: <span>{owner.nome}</span></p>
+            <p>Telefone: <span>{owner.telefone || 'Não informado'}</span></p>
+            <p>Email: <span>{owner.email}</span></p>
+          </div>
+        )}
       </div>
-
-      {owner && (
-        <div className="owner-info-card">
-          <h2>Informações do Proprietário</h2>
-          <p>Nome: <span>{owner.nome}</span></p>
-          <p>Telefone: <span>{owner.telefone || 'Não informado'}</span></p>
-          <p>Email: <span>{owner.email}</span></p>
-        </div>
-      )}
     </div>
   );
 }

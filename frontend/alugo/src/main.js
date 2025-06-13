@@ -1,5 +1,6 @@
-// alugo/frontend/alugo/src/main.js
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
 import App from './App';
 import NovoItem from './newItem';
 import ItensList from './list';
@@ -11,15 +12,34 @@ import ProfilePage from './ProfilePage';
 import MyProductsPage from './MyProductsPage';
 import ProductDetailsPage from './ProductDetailsPage';
 import MyRentalsPage from './MyRentalsPage';
-import CartPage from './CartPage'; // Importar CartPage
+import CartPage from './CartPage';
+
 import { UserProvider } from './UserContext';
-import { CartProvider } from './CartContext'; // Importar CartProvider
+import { CartProvider } from './CartContext';
 
 function Main() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('loggedInUser');
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLoginSuccess = userData => {
+    setUser(userData);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('loggedInUser');
+    setUser(null);
+  };
+
   return (
     <Router>
-      <UserProvider>
-        <CartProvider> {/* Envolva toda a aplicação com CartProvider */}
+      <UserProvider value={{ user, handleLoginSuccess, handleLogout }}>
+        <CartProvider>
           <Routes>
             <Route path="/" element={<App />} />
             <Route path="/novo-item" element={<NovoItem />} />
@@ -32,8 +52,7 @@ function Main() {
             <Route path="/my-products" element={<MyProductsPage />} />
             <Route path="/item/:id" element={<ProductDetailsPage />} />
             <Route path="/my-rentals" element={<MyRentalsPage />} />
-            <Route path="/cart" element={<CartPage />} /> {/* Nova rota para o carrinho */}
-            {/* Se tiver outras rotas, adicione-as aqui */}
+            <Route path="/cart" element={<CartPage />} />
           </Routes>
         </CartProvider>
       </UserProvider>

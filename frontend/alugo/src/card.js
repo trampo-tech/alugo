@@ -1,10 +1,18 @@
 import React from 'react';
 import './card.css'; // ✅ precisa do "./"
 import { MapPin, Calendar } from 'lucide-react';
+import UserMenu from './UserMenu';
+
 
 function ItemCard({ item }) {
   return (
-    <div className="item-card">
+    <div className="item-card">      
+    <header className="header">
+        <div className="logo">ALUGO</div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
         <img
         src={`http://localhost:8080/imagem/${item.imagem_id}`}
         alt={item.titulo}

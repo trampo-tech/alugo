@@ -27,7 +27,14 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <div className="logo">ALUGO</div>
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
         <div className="header-buttons">
           <UserMenu />
         </div>
@@ -35,7 +42,7 @@ function App() {
 
 
       <section className="hero">
-        <h1>Rent items from people</h1>
+        <h1>Procure Aqui!</h1>
         <div className="search-bar">
           <input
             type="text"
@@ -48,7 +55,7 @@ function App() {
       </section>
 
       <section className="popular">
-        <h2>Categorias</h2>
+        <h2>Itens Polulares</h2>
         <div className="items">
           {itens.map((item) => (
             <div

@@ -5,6 +5,7 @@ import './App.css';
 import './newItem.css';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import UserMenu from './UserMenu';
 
 function RegisterPage() {
   const [nome, setNome] = useState('');
@@ -77,63 +78,71 @@ function RegisterPage() {
   };
 
   return (
-    <div className="novoitem-container">
-      {/* Botão de Voltar */}
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
+    <div className="app">
+      <header className="header">
+        <div className="logo">ALUGO</div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="novoitem-container">
+        {/* Botão de Voltar */}
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
+        </div>
+        <h2>Cadastro de Usuário</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="nome">Nome:</label>
+          <input type="text" id="nome" value={nome} onChange={e => setNome(e.target.value)} required />
+
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required />
+
+          <label htmlFor="senha">Senha:</label>
+          <input type="password" id="senha" value={senha} onChange={e => setSenha(e.target.value)} required />
+
+          <label htmlFor="telefone">Telefone (opcional):</label>
+          <input type="text" id="telefone" value={telefone} onChange={e => setTelefone(e.target.value)} />
+
+          <label htmlFor="cpf">CPF (opcional):</label>
+          <input
+            type="text"
+            id="cpf"
+            value={cpf}
+            onChange={handleCpfChange}
+            maxLength="14"
+            placeholder="000.000.000-00"
+          />
+
+          <label htmlFor="dataNascimento">Data de Nascimento (opcional):</label>
+          <input type="date" id="dataNascimento" value={dataNascimento} onChange={e => setDataNascimento(e.target.value)} />
+
+          <label htmlFor="genero">Gênero (opcional):</label>
+          <select id="genero" value={genero} onChange={e => setGenero(e.target.value)}>
+            <option value="">Selecione</option>
+            <option value="masculino">Masculino</option>
+            <option value="feminino">Feminino</option>
+            <option value="outro">Outro</option>
+            <option value="prefiro_nao_dizer">Prefiro não dizer</option>
+          </select>
+
+          <label htmlFor="tipoUsuario">Tipo de Usuário:</label>
+          <select id="tipoUsuario" value={tipoUsuario} onChange={e => setTipoUsuario(e.target.value)}>
+            <option value="ambos">Locador e Locatário</option>
+            <option value="locador">Apenas Locador</option>
+            <option value="locatario">Apenas Locatário</option>
+          </select>
+
+          <button type="submit" className="primary">Cadastrar</button>
+        </form>
+        {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+
+        <p className="form-link">
+          Já tem uma conta? <a href="/login">Faça login aqui</a>
+        </p>
       </div>
-      <h2>Cadastro de Usuário</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="nome">Nome:</label>
-        <input type="text" id="nome" value={nome} onChange={e => setNome(e.target.value)} required />
-
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required />
-
-        <label htmlFor="senha">Senha:</label>
-        <input type="password" id="senha" value={senha} onChange={e => setSenha(e.target.value)} required />
-
-        <label htmlFor="telefone">Telefone (opcional):</label>
-        <input type="text" id="telefone" value={telefone} onChange={e => setTelefone(e.target.value)} />
-
-        <label htmlFor="cpf">CPF (opcional):</label>
-        <input
-          type="text"
-          id="cpf"
-          value={cpf}
-          onChange={handleCpfChange}
-          maxLength="14"
-          placeholder="000.000.000-00"
-        />
-
-        <label htmlFor="dataNascimento">Data de Nascimento (opcional):</label>
-        <input type="date" id="dataNascimento" value={dataNascimento} onChange={e => setDataNascimento(e.target.value)} />
-
-        <label htmlFor="genero">Gênero (opcional):</label>
-        <select id="genero" value={genero} onChange={e => setGenero(e.target.value)}>
-          <option value="">Selecione</option>
-          <option value="masculino">Masculino</option>
-          <option value="feminino">Feminino</option>
-          <option value="outro">Outro</option>
-          <option value="prefiro_nao_dizer">Prefiro não dizer</option>
-        </select>
-
-        <label htmlFor="tipoUsuario">Tipo de Usuário:</label>
-        <select id="tipoUsuario" value={tipoUsuario} onChange={e => setTipoUsuario(e.target.value)}>
-          <option value="ambos">Locador e Locatário</option>
-          <option value="locador">Apenas Locador</option>
-          <option value="locatario">Apenas Locatário</option>
-        </select>
-
-        <button type="submit" className="primary">Cadastrar</button>
-      </form>
-      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
-
-      <p className="form-link">
-        Já tem uma conta? <a href="/login">Faça login aqui</a>
-      </p>
     </div>
   );
 }

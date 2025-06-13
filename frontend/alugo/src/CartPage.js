@@ -8,6 +8,7 @@ import { ArrowLeft, Trash2 } from 'lucide-react';
 import './CartPage.css';
 import './list.css';
 import './newItem.css'; // Para estilos de mensagem de feedback
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function CartPage() {
   const { cartItems, removeFromCart, clearCart } = useContext(CartContext);
@@ -79,65 +80,80 @@ function CartPage() {
   };
 
   return (
-    <div className="itens-page cart-page-container">
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
-      </div>
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="itens-page cart-page-container">
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
+        </div>
 
-      <h2>Seu Carrinho ({cartItems.length} itens)</h2>
-      {mensagemCheckout && (
-        <p className={mensagemCheckout.includes('sucesso') || mensagemCheckout.includes('concluído') ? 'feedback-message success' : 'feedback-message error'}>
-          {mensagemCheckout}
-        </p>
-      )}
+        <h2>Seu Carrinho ({cartItems.length} itens)</h2>
+        {mensagemCheckout && (
+          <p className={mensagemCheckout.includes('sucesso') || mensagemCheckout.includes('concluído') ? 'feedback-message success' : 'feedback-message error'}>
+            {mensagemCheckout}
+          </p>
+        )}
 
-      {cartItems.length === 0 ? (
-        <p>Seu carrinho está vazio. Adicione itens para alugar!</p>
-      ) : (
-        <>
-          <div className="listagem-itens">
-            {cartItems.map((item) => (
-              <div key={`${item.item_id}-${item.data_inicio}-${item.data_fim}`} className="item-card cart-item-card">
-                {item.imagem_id ? (
-                  <img
-                    src={`http://localhost:8080/imagem/${item.imagem_id}`}
-                    alt={item.titulo}
-                    className="item-image"
-                  />
-                ) : (
-                  <div className="item-image-placeholder">N/A</div>
-                )}
-                <h3>{item.titulo}</h3>
-                <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
-                <p>De: <span>{formatDate(item.data_inicio)}</span></p>
-                <p>Até: <span>{formatDate(item.data_fim)}</span></p>
-                <p>Proprietário: <span>{item.locador_nome}</span></p>
-                
-                <div className="card-buttons-container">
-                  <button 
-                    className="btn-detalhes danger" 
-                    onClick={() => removeFromCart(item.item_id, item.data_inicio, item.data_fim)}
-                  >
-                    <Trash2 size={16} /> Remover
-                  </button>
+        {cartItems.length === 0 ? (
+          <p>Seu carrinho está vazio. Adicione itens para alugar!</p>
+        ) : (
+          <>
+            <div className="listagem-itens">
+              {cartItems.map((item) => (
+                <div key={`${item.item_id}-${item.data_inicio}-${item.data_fim}`} className="item-card cart-item-card">
+                  {item.imagem_id ? (
+                    <img
+                      src={`http://localhost:8080/imagem/${item.imagem_id}`}
+                      alt={item.titulo}
+                      className="item-image"
+                    />
+                  ) : (
+                    <div className="item-image-placeholder">N/A</div>
+                  )}
+                  <h3>{item.titulo}</h3>
+                  <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
+                  <p>De: <span>{formatDate(item.data_inicio)}</span></p>
+                  <p>Até: <span>{formatDate(item.data_fim)}</span></p>
+                  <p>Proprietário: <span>{item.locador_nome}</span></p>
+                  
+                  <div className="card-buttons-container">
+                    <button 
+                      className="btn-detalhes danger" 
+                      onClick={() => removeFromCart(item.item_id, item.data_inicio, item.data_fim)}
+                    >
+                      <Trash2 size={16} /> Remover
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          <div className="cart-summary">
-            <h3>Valor Total do Carrinho: R${calculateTotalCartValue()}</h3>
-            <button className="primary" onClick={handleCheckout}>
-              Finalizar Aluguel
-            </button>
-            <button className="outline" onClick={clearCart} style={{marginLeft: '10px'}}>
-              Limpar Carrinho
-            </button>
-          </div>
-        </>
-      )}
+              ))}
+            </div>
+            
+            <div className="cart-summary">
+              <h3>Valor Total do Carrinho: R${calculateTotalCartValue()}</h3>
+              <button className="primary" onClick={handleCheckout}>
+                Finalizar Aluguel
+              </button>
+              <button className="outline" onClick={clearCart} style={{marginLeft: '10px'}}>
+                Limpar Carrinho
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

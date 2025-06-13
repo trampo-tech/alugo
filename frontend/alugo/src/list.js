@@ -5,6 +5,7 @@ import './list.css';
 import './card.css'; // Importa card.css para o item-card
 import axios from 'axios';
 import { useLocation, useNavigate } from 'react-router-dom';
+import UserMenu from './UserMenu';
 
 function ItensList() {
   // `filtros` agora inclui query, categoria, precoMin, precoMax, dataInicial, dataFinal, e status
@@ -86,51 +87,62 @@ function ItensList() {
   };
 
   return (
-    <div className="itens-page">
-      {/* Barra de pesquisa na página de listagem */}
-      <div className="list-page-search-bar">
-        <input
-          type="text"
-          placeholder="Pesquise por itens..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-        <button onClick={handleSearchBarSearch}>Pesquisar</button>
-      </div>
-
-      <div className="list-content-container"> {/* Contêiner para sidebar e listagem */}
-        {/* Passa todos os filtros atuais para a SidebarFilters */}
-        <SidebarFilters onFilterChange={handleFilterChange} currentFilters={filtros} /> 
-        <div className="listagem-itens">
-          {loading && <p>Carregando itens...</p>}
-          {error && <p className="feedback-message error">{error}</p>}
-          {!loading && !error && itens.length === 0 && (
-            <p>Nenhum item encontrado com os critérios de busca.</p>
-          )}
-          {itens.map((item) => (
-            <div
-              className="item-card"
-              key={item.id}
-              onClick={() => handleItemClick(item.id)}
-              style={{ cursor: 'pointer' }}
-            >
-              {item.imagem_id ? (
-                <img src={`http://localhost:8080/imagem/${item.imagem_id}`} alt={item.titulo} className="item-image" />
-              ) : (
-                <div className="item-image-placeholder">N/A</div>
-              )}
-              <h3>{item.titulo}</h3>
-              <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
-              
-              {/* Exibe a disponibilidade (status) do item */}
-              <div className="item-info status-display"> 
-                <span>Status: {getFriendlyStatus(item.status)}</span>
-              </div>
-              <button className="btn-detalhes">Ver detalhes</button>
-            </div>
-          ))}
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="list-page-search-bar">
+          <input
+            type="text"
+            placeholder="Pesquise por itens..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <button onClick={handleSearchBarSearch}>Pesquisar</button>
         </div>
-      </div>
+                <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+        <div className="list-content-container"> {/* Contêiner para sidebar e listagem */}
+          {/* Passa todos os filtros atuais para a SidebarFilters */}
+          <SidebarFilters onFilterChange={handleFilterChange} currentFilters={filtros} /> 
+          <div className="listagem-itens">
+            {loading && <p>Carregando itens...</p>}
+            {error && <p className="feedback-message error">{error}</p>}
+            {!loading && !error && itens.length === 0 && (
+              <p>Nenhum item encontrado com os critérios de busca.</p>
+            )}
+            {itens.map((item) => (
+              <div
+                className="item-card"
+                key={item.id}
+                onClick={() => handleItemClick(item.id)}
+                style={{ cursor: 'pointer' }}
+              >
+                {item.imagem_id ? (
+                  <img src={`http://localhost:8080/imagem/${item.imagem_id}`} alt={item.titulo} className="item-image" />
+                ) : (
+                  <div className="item-image-placeholder">N/A</div>
+                )}
+                <h3>{item.titulo}</h3>
+                <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
+                
+                {/* Exibe a disponibilidade (status) do item */}
+                <div className="item-info status-display"> 
+                  <span>Status: {getFriendlyStatus(item.status)}</span>
+                </div>
+                <button className="btn-detalhes">Ver detalhes</button>
+              </div>
+            ))}
+          </div>
+        </div>
     </div>
   );
 }

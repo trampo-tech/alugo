@@ -7,6 +7,7 @@ import './list.css'; // Reutilizando estilos de listagem para cards
 import './MyRentalsPage.css'; // Novo arquivo CSS específico para esta página
 import './card.css'; // Importa card.css para que os estilos de item-card sejam aplicados
 import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function MyRentalsPage() {
   const { loggedInUser } = useContext(UserContext);
@@ -79,46 +80,61 @@ function MyRentalsPage() {
   }
 
   return (
-    <div className="itens-page my-rentals-page">
-      {/* Botão de Voltar */}
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
-      </div>
-      <h2>Meus Aluguéis</h2>
-      {myRentals.length === 0 ? (
-        <p>Você não possui aluguéis registrados no momento.</p>
-      ) : (
-        <div className="listagem-itens">
-          {myRentals.map((rental) => (
-            <div key={rental.pedido_id} className="item-card rental-card" onClick={() => handleItemClick(rental.item_id)} style={{ cursor: 'pointer' }}>
-              {rental.item_imagem_id ? (
-                <img
-                  src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
-                  alt={rental.item_titulo}
-                  className="item-image"
-                />
-              ) : (
-                <div className="item-image-placeholder">Imagem Indisponível</div>
-              )}
-              <h3>{rental.item_titulo}</h3>
-              <p className="rental-dates">
-                De: <span>{formatDate(rental.data_inicio)}</span> <br/>
-                Até: <span>{formatDate(rental.data_fim)}</span>
-              </p>
-              <p className="rental-value">Total: <span>R${parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</span></p>
-              <p className={`rental-status status-${rental.pedido_status}`}>Status: {getFriendlyStatus(rental.pedido_status)}</p>
-              <div className="locador-info">
-                <h4>Proprietário do Item:</h4>
-                <p>Nome: {rental.locador_nome}</p>
-                <p>Email: {rental.locador_email}</p>
-                <p>Tel: {rental.locador_telefone || 'Não informado'}</p>
-              </div>
-            </div>
-          ))}
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="header-buttons">
+          <UserMenu />
         </div>
-      )}
+      </header>
+      <div className="itens-page my-rentals-page">
+        {/* Botão de Voltar */}
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
+        </div>
+        <h2>Meus Aluguéis</h2>
+        {myRentals.length === 0 ? (
+          <p>Você não possui aluguéis registrados no momento.</p>
+        ) : (
+          <div className="listagem-itens">
+            {myRentals.map((rental) => (
+              <div key={rental.pedido_id} className="item-card rental-card" onClick={() => handleItemClick(rental.item_id)} style={{ cursor: 'pointer' }}>
+                {rental.item_imagem_id ? (
+                  <img
+                    src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
+                    alt={rental.item_titulo}
+                    className="item-image"
+                  />
+                ) : (
+                  <div className="item-image-placeholder">Imagem Indisponível</div>
+                )}
+                <h3>{rental.item_titulo}</h3>
+                <p className="rental-dates">
+                  De: <span>{formatDate(rental.data_inicio)}</span> <br/>
+                  Até: <span>{formatDate(rental.data_fim)}</span>
+                </p>
+                <p className="rental-value">Total: <span>R${parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</span></p>
+                <p className={`rental-status status-${rental.pedido_status}`}>Status: {getFriendlyStatus(rental.pedido_status)}</p>
+                <div className="locador-info">
+                  <h4>Proprietário do Item:</h4>
+                  <p>Nome: {rental.locador_nome}</p>
+                  <p>Email: {rental.locador_email}</p>
+                  <p>Tel: {rental.locador_telefone || 'Não informado'}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

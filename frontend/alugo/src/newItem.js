@@ -6,6 +6,7 @@ import './newItem.css'; // Estilos específicos do formulário
 import './App.css'; // Estilos gerais, se necessário
 import { UserContext } from './UserContext'; // Para obter o usuario_id
 import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function NovoItem() {
   const { loggedInUser } = useContext(UserContext);
@@ -78,37 +79,46 @@ function NovoItem() {
   };
 
   return (
-    <div className="novoitem-container">
-      {/* Botão de Voltar */}
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/my-products')}>
-          <ArrowLeft size={20} /> Voltar para Meus Produtos
-        </button>
+    <div className="app">
+      <header className="header">
+        <div className="logo">ALUGO</div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="novoitem-container">
+        {/* Botão de Voltar */}
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/my-products')}>
+            <ArrowLeft size={20} /> Voltar para Meus Produtos
+          </button>
+        </div>
+        <h2>Adicionar Novo Item</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="titulo">Título:</label>
+          <input type="text" id="titulo" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
+
+          <label htmlFor="descricao">Descrição:</label>
+          <textarea id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
+
+          <label htmlFor="categoria">Categoria:</label>
+          <input type="text" id="categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} />
+
+          <label htmlFor="precoDiario">Preço Diário (R$):</label>
+          <input type="number" id="precoDiario" value={precoDiario} onChange={(e) => setPrecoDiario(e.target.value)} step="0.01" required />
+
+          <label htmlFor="condicoesUso">Condições de Uso:</label>
+          <textarea id="condicoesUso" value={condicoesUso} onChange={(e) => setCondicoesUso(e.target.value)}></textarea>
+
+          <label htmlFor="imagem">Imagem do Item:</label>
+          <input type="file" id="imagem" accept="image/*" onChange={(e) => setImagem(e.target.files[0])} required />
+
+          <button type="submit" className="primary">Cadastrar Item</button>
+        </form>
+        {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+    
       </div>
-      <h2>Adicionar Novo Item</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="titulo">Título:</label>
-        <input type="text" id="titulo" value={titulo} onChange={(e) => setTitulo(e.target.value)} required />
-
-        <label htmlFor="descricao">Descrição:</label>
-        <textarea id="descricao" value={descricao} onChange={(e) => setDescricao(e.target.value)}></textarea>
-
-        <label htmlFor="categoria">Categoria:</label>
-        <input type="text" id="categoria" value={categoria} onChange={(e) => setCategoria(e.target.value)} />
-
-        <label htmlFor="precoDiario">Preço Diário (R$):</label>
-        <input type="number" id="precoDiario" value={precoDiario} onChange={(e) => setPrecoDiario(e.target.value)} step="0.01" required />
-
-        <label htmlFor="condicoesUso">Condições de Uso:</label>
-        <textarea id="condicoesUso" value={condicoesUso} onChange={(e) => setCondicoesUso(e.target.value)}></textarea>
-
-        <label htmlFor="imagem">Imagem do Item:</label>
-        <input type="file" id="imagem" accept="image/*" onChange={(e) => setImagem(e.target.files[0])} required />
-
-        <button type="submit" className="primary">Cadastrar Item</button>
-      </form>
-      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
-    </div>
+    </div>  
   );
 }
 

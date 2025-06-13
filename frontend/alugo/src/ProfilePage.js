@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './newItem.css'; // Reutilizando o estilo do formulário
 import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function ProfilePage() {
   const { loggedInUser, login } = useContext(UserContext);
@@ -63,33 +64,48 @@ function ProfilePage() {
   };
 
   return (
-    <div className="novoitem-container">
-      {/* Botão de Voltar */}
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="novoitem-container">
+        {/* Botão de Voltar */}
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
+        </div>
+        <h2>Gerenciar Perfil</h2>
+        <form onSubmit={handleSubmit}>
+          <label htmlFor="nome">Nome:</label>
+          <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
+
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
+          <label htmlFor="senha">Nova Senha (deixe em branco para não alterar):</label>
+          <input type="password" id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
+
+          <label htmlFor="telefone">Telefone:</label>
+          <input type="text" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
+
+          <label htmlFor="endereco">Endereço:</label>
+          <textarea id="endereco" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
+
+          <button type="submit" className="primary">Salvar Alterações</button>
+        </form>
+        {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
       </div>
-      <h2>Gerenciar Perfil</h2>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="nome">Nome:</label>
-        <input type="text" id="nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
-
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-        <label htmlFor="senha">Nova Senha (deixe em branco para não alterar):</label>
-        <input type="password" id="senha" value={senha} onChange={(e) => setSenha(e.target.value)} />
-
-        <label htmlFor="telefone">Telefone:</label>
-        <input type="text" id="telefone" value={telefone} onChange={(e) => setTelefone(e.target.value)} />
-
-        <label htmlFor="endereco">Endereço:</label>
-        <textarea id="endereco" value={endereco} onChange={(e) => setEndereco(e.target.value)} />
-
-        <button type="submit" className="primary">Salvar Alterações</button>
-      </form>
-      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from './UserContext';
 import './newItem.css'; // Para estilos de formulário e mensagens
 import { ArrowLeft } from 'lucide-react'; // Importar ícone
+import UserMenu from './UserMenu'; // Importa o componente de menu do usuário
 
 function LoginPage() {
   const [email, setEmail] = useState('');
@@ -40,28 +41,36 @@ function LoginPage() {
   };
 
   return (
-    <div className="novoitem-container">
-      {/* Botão de Voltar */}
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
+    <div className="app">
+      <header className="header">
+        <div className="logo">ALUGO</div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="novoitem-container">
+        {/* Botão de Voltar */}
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
+        </div>
+        <h2>Login</h2>
+        <form onSubmit={handleLogin}>
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required />
+
+          <label htmlFor="senha">Senha:</label>
+          <input type="password" id="senha" value={senha} onChange={e => setSenha(e.target.value)} required />
+
+          <button type="submit" className="primary">Entrar</button>
+        </form>
+        {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+        
+        <p className="form-link">
+          Não tem uma conta? <a href="/register">Cadastre-se aqui</a>
+        </p>
       </div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <label htmlFor="email">Email:</label>
-        <input type="email" id="email" value={email} onChange={e => setEmail(e.target.value)} required />
-
-        <label htmlFor="senha">Senha:</label>
-        <input type="password" id="senha" value={senha} onChange={e => setSenha(e.target.value)} required />
-
-        <button type="submit" className="primary">Entrar</button>
-      </form>
-      {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
-      
-      <p className="form-link">
-        Não tem uma conta? <a href="/register">Cadastre-se aqui</a>
-      </p>
     </div>
   );
 }

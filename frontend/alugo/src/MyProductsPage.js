@@ -8,6 +8,8 @@ import './list.css';
 import './card.css';
 import './MyProductsPage.css';
 import { ArrowLeft } from 'lucide-react';
+import UserMenu from './UserMenu';
+
 
 function MyProductsPage() {
   const { loggedInUser } = useContext(UserContext);
@@ -166,104 +168,120 @@ function MyProductsPage() {
   };
 
   return (
-    <div className="itens-page my-products-page-container">
-      <div className="back-button-container">
-        <button className="outline" onClick={() => navigate('/')}>
-          <ArrowLeft size={20} /> Voltar para o Início
-        </button>
-      </div>
-
-      <div className="my-products-main-content-wrapper">
-        <div className="sidebar-filters" style={{ width: 'unset', maxWidth: '280px' }}>
-          <h2>Meus Produtos</h2>
-          <button className="primary" onClick={handleAddNewProduct}>Adicionar Novo Produto</button>
-          {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+    <div className="app">
+      <header className="header">
+        <div
+          className="logo"
+          style={{ cursor: 'pointer' }}
+          onClick={() => navigate('/')}
+          title="Voltar para o início"
+          >
+            ALUGO
+          </div>
+        <div className="header-buttons">
+          <UserMenu />
+        </div>
+      </header>
+      <div className="itens-page my-products-page-container">
+        <div className="back-button-container">
+          <button className="outline" onClick={() => navigate('/')}>
+            <ArrowLeft size={20} /> Voltar para o Início
+          </button>
         </div>
 
-        <div className="main-content">
-          <section className="my-items-section">
-            <h3>Itens Cadastrados por Mim</h3>
-            {loadingItems ? (
-              <p>Carregando seus itens...</p>
-            ) : myItems.length === 0 ? (
-              <p>Você não tem nenhum item cadastrado. Clique em "Adicionar Novo Produto" para começar!</p>
-            ) : (
-              <div className="listagem-itens">
-                {myItems.map((item) => (
-                  <div key={item.id} className="item-card">
-                    {item.imagem_id ? (
-                      <img
-                        src={`http://localhost:8080/imagem/${item.imagem_id}`}
-                        alt={item.titulo}
-                        className="item-image"
-                      />
-                    ) : (
-                      <div className="item-image-placeholder">N/A</div>
-                    )}
-                    <h3>{item.titulo}</h3>
-                    <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
-                    <p className={`product-status status-${item.status}`}>{item.status}</p>
-                    <div className="card-buttons-container">
-                      <button className="btn-detalhes" onClick={() => handleItemClick(item.id)}>Ver Detalhes</button>
-                      <button className="btn-detalhes danger" onClick={() => handleDeleteItem(item.id)}>Deletar</button>
+        <div className="my-products-main-content-wrapper">
+          <div className="sidebar-filters" style={{ width: 'unset', maxWidth: '280px' }}>
+            <h2>Meus Produtos</h2>
+            <button className="primary" onClick={handleAddNewProduct}>Adicionar Novo Produto</button>
+            {mensagem && <p className={mensagem.includes('sucesso') ? 'feedback-message success' : 'feedback-message error'}>{mensagem}</p>}
+          </div>
+
+          <div className="main-content">
+            <section className="incoming-rentals-section">
+              <h3>Pedidos de Aluguel Recebidos</h3>
+              {loadingRentals ? (
+                <p>Carregando pedidos...</p>
+              ) : incomingRentals.length === 0 ? (
+                <p>Nenhum pedido de aluguel recebido para seus itens com status pendente ou em andamento.</p>
+              ) : (
+                <div className="listagem-itens">
+                  {incomingRentals.map((rental) => (
+                    <div key={rental.pedido_id} className="item-card rental-request-card">
+                      {rental.item_imagem_id ? (
+                        <img
+                          src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
+                          alt={rental.item_titulo}
+                          className="item-image"
+                        />
+                      ) : (
+                        <div className="item-image-placeholder">N/A</div>
+                      )}
+                      <h3>{rental.item_titulo}</h3>
+                      <p>De: <strong>{rental.locatario_nome}</strong></p>
+                      <p>Período: {formatDate(rental.data_inicio)} a {formatDate(rental.data_fim)}</p>
+                      <p>Valor: R$ {parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</p>
+                      <p className={`rental-status status-${rental.pedido_status}`}>Status: {rental.pedido_status}</p>
+
+                      {rental.pedido_status === 'pendente' && (
+                        <div className="card-buttons-container">
+                          <button className="btn-detalhes primary" onClick={() => handleApproveRental(rental.pedido_id, rental.item_id)}>Aprovar</button>
+                          <button className="btn-detalhes danger" onClick={() => handleRejectRental(rental.pedido_id, rental.item_id)}>Rejeitar</button>
+                        </div>
+                      )}
+                      {rental.pedido_status === 'em_andamento' && (
+                        <p className="feedback-message success" style={{width: '100%', marginTop: 'auto', marginBottom: '10px'}}>Este pedido foi aprovado.</p>
+                      )}
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-
-          <section className="incoming-rentals-section">
-            <h3>Pedidos de Aluguel Recebidos</h3>
-            {loadingRentals ? (
-              <p>Carregando pedidos...</p>
-            ) : incomingRentals.length === 0 ? (
-              <p>Nenhum pedido de aluguel recebido para seus itens com status pendente ou em andamento.</p>
-            ) : (
-              <div className="listagem-itens">
-                {incomingRentals.map((rental) => (
-                  <div key={rental.pedido_id} className="item-card rental-request-card">
-                    {rental.item_imagem_id ? (
-                      <img
-                        src={`http://localhost:8080/imagem/${rental.item_imagem_id}`}
-                        alt={rental.item_titulo}
-                        className="item-image"
-                      />
-                    ) : (
-                      <div className="item-image-placeholder">N/A</div>
-                    )}
-                    <h3>{rental.item_titulo}</h3>
-                    <p>De: <strong>{rental.locatario_nome}</strong></p>
-                    <p>Período: {formatDate(rental.data_inicio)} a {formatDate(rental.data_fim)}</p>
-                    <p>Valor: R$ {parseFloat(rental.valor_total).toFixed(2).replace('.', ',')}</p>
-                    <p className={`rental-status status-${rental.pedido_status}`}>Status: {rental.pedido_status}</p>
-
-                    {rental.pedido_status === 'pendente' && (
+                  ))}
+                </div>
+              )}
+            </section>
+            <section className="my-items-section">
+              <h3>Itens Cadastrados por Mim</h3>
+              {loadingItems ? (
+                <p>Carregando seus itens...</p>
+              ) : myItems.length === 0 ? (
+                <p>Você não tem nenhum item cadastrado. Clique em "Adicionar Novo Produto" para começar!</p>
+              ) : (
+                <div className="listagem-itens">
+                  {myItems.map((item) => (
+                    <div key={item.id} className="item-card">
+                      {item.imagem_id ? (
+                        <img
+                          src={`http://localhost:8080/imagem/${item.imagem_id}`}
+                          alt={item.titulo}
+                          className="item-image"
+                        />
+                      ) : (
+                        <div className="item-image-placeholder">N/A</div>
+                      )}
+                      <h3>{item.titulo}</h3>
+                      <p className="item-preco">R${parseFloat(item.preco_diario).toFixed(2).replace('.', ',')}/dia</p>
+                      <p className={`product-status status-${item.status}`}>{item.status}</p>
                       <div className="card-buttons-container">
-                        <button className="btn-detalhes primary" onClick={() => handleApproveRental(rental.pedido_id, rental.item_id)}>Aprovar</button>
-                        <button className="btn-detalhes danger" onClick={() => handleRejectRental(rental.pedido_id, rental.item_id)}>Rejeitar</button>
+                        <button className="btn-detalhes" onClick={() => handleItemClick(item.id)}>Ver Detalhes</button>
+                        <button className="btn-detalhes danger" onClick={() => handleDeleteItem(item.id)}>Deletar</button>
                       </div>
-                    )}
-                    {rental.pedido_status === 'em_andamento' && (
-                      <p className="feedback-message success" style={{width: '100%', marginTop: 'auto', marginBottom: '10px'}}>Este pedido foi aprovado.</p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
-        </div>
-      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
 
-      {showModal && (
-        <ConfirmationModal 
-          message={modalMessage}
-          onConfirm={confirmAction}
-          onCancel={cancelAction}
-          confirmText={modalAction === 'delete' ? 'Sim, Deletar' : (modalAction === 'approve' ? 'Sim, Aprovar' : 'Sim, Rejeitar')}
-          cancelText="Não, Cancelar"
-        />
-      )}
+            
+          </div>
+        </div>
+
+        {showModal && (
+          <ConfirmationModal 
+            message={modalMessage}
+            onConfirm={confirmAction}
+            onCancel={cancelAction}
+            confirmText={modalAction === 'delete' ? 'Sim, Deletar' : (modalAction === 'approve' ? 'Sim, Aprovar' : 'Sim, Rejeitar')}
+            cancelText="Não, Cancelar"
+          />
+        )}
+      </div>
     </div>
   );
 }

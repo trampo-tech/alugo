@@ -5,7 +5,6 @@ const multer = require('multer');
 
 const upload = multer(); // Upload em memória
 
-// 📌 Criar nova categoria
 router.post('/', upload.single('imagem'), (req, res) => {
   console.log('Recebido:', req.body, req.file); // Debug opcional
   const { nome } = req.body;
@@ -25,7 +24,6 @@ router.post('/', upload.single('imagem'), (req, res) => {
   });
 });
 
-// 📌 Listar categorias
 router.get('/', (req, res) => {
   const query = 'SELECT id, nome, TO_BASE64(imagem) AS imagem_base64 FROM categorias ORDER BY nome ASC';
   db.query(query, (err, rows) => {
@@ -37,7 +35,6 @@ router.get('/', (req, res) => {
   });
 });
 
-// 📌 Buscar por ID
 router.get('/:id', (req, res) => {
   const { id } = req.params;
   const query = 'SELECT id, nome, TO_BASE64(imagem) AS imagem_base64 FROM categorias WHERE id = ?';
@@ -48,7 +45,6 @@ router.get('/:id', (req, res) => {
   });
 });
 
-// 📌 Atualizar categoria (opcional)
 router.put('/:id', upload.single('imagem'), (req, res) => {
   const { id } = req.params;
   const { nome } = req.body;
@@ -69,7 +65,6 @@ router.put('/:id', upload.single('imagem'), (req, res) => {
   });
 });
 
-// 📌 Deletar categoria
 router.delete('/:id', (req, res) => {
   const { id } = req.params;
   db.query('DELETE FROM categorias WHERE id = ?', [id], (err) => {

@@ -584,7 +584,7 @@ app.get('/itens', (req, res) => {
       (SELECT id FROM imagens WHERE imagens.item_id = itens.id LIMIT 1) AS imagem_id
     FROM itens
     ORDER BY RAND()
-    LIMIT 4
+    LIMIT 3
   `;
 
   db.query(sql, (err, result) => {
@@ -686,24 +686,30 @@ app.get('/buscar-itens', async (req, res) => {
   const table_name = 'itens';
 
   let filters = '';
+  let dateFilterSql = '';      
+  let dateFilterParams = [];
   if (categoria) {
-    filters += `categoria:${categoria},`;
+    filters += `categoria:${categoria};`;
   }
   if (precoMin) {
-    filters += `preco_diario:${precoMin}-,`;
+    filters += `preco_diario:${precoMin}-,`; // Se só tem mínimo, formato 'min-'
   }
   if (precoMax) {
-    filters += `preco_diario:-${precoMax},`;
+    filters += `preco_diario:-${precoMax},`; // Se só tem máximo, formato '-max'
   }
   if (precoMin && precoMax) {
-    filters += `preco_diario:${precoMin}-${precoMax},`;
+    filters += `preco_diario:${precoMin}-${precoMax},`; // Se tem ambos, formato 'min-max'
   }
 
-  // Lógica para filtrar por datas de disponibilidade (período que o item *não* está alugado)
-  let dateFilterSql = '';
-  const dateFilterParams = [];
-
+  // Adiciona filtros de data, referenciando o campo 'created_at' no backend Python
+  if (dataInicial) {
+    filters += `created_at:${dataInicial}-,`;
+  }
+  if (dataFinal) {
+    filters += `created_at:-${dataFinal},`;
+  }
   if (dataInicial && dataFinal) {
+      // Itens que estão disponíveis OU que não têm pedidos sobrepostos no período
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -719,6 +725,7 @@ app.get('/buscar-itens', async (req, res) => {
           )`;
       dateFilterParams.push(dataFinal, dataInicial, dataInicial, dataFinal, dataInicial, dataFinal);
   } else if (dataInicial) {
+      // Itens que estão disponíveis OU que não estão alugados a partir da data inicial
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -730,6 +737,7 @@ app.get('/buscar-itens', async (req, res) => {
           )`;
       dateFilterParams.push(dataInicial);
   } else if (dataFinal) {
+      // Itens que estão disponíveis OU que não estão alugados até a data final
       dateFilterSql = `
           AND (
               i.status = 'disponivel' OR i.status = 'inativo' OR NOT EXISTS (
@@ -743,6 +751,7 @@ app.get('/buscar-itens', async (req, res) => {
   }
 
 
+  // Adicionado filtro de status para a busca híbrida (se o search engine suportar)
   if (status) {
     filters += `status:${status},`;
   }
